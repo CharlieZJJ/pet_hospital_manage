@@ -1,0 +1,66 @@
+import axios from 'axios'
+import { ElLoading } from 'element-plus'
+import { ElMessage } from 'element-plus'
+
+const loadingObj = null
+
+const service = axios.create({
+    timeout: 5000,
+    baseURL: 'https://2663y694s3.zicp.vip/',
+    headers: {
+        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
+    }
+})
+
+
+// 拦截请求，载入加载动画
+service.interceptors.request.use(config => {
+    // loadingObj = ElLoading.service({
+    //     lock: true,
+    //     text: '正在努力加载中！请稍微~',
+    //     background: 'rgba(0, 0, 0, 0.7)',
+    // })
+    // console.log("here")
+    return config
+})
+
+
+// 对每个响应进行预处理
+service.interceptors.response.use(response => {
+    // loadingObj.close()
+    const data = response.data
+    if(!data.success) {
+        ElMessage({
+            message: "出错啦！！！",
+            type: 'error',
+            duration: 1500,
+        })
+        return data
+    }
+    return data
+}, err => {
+    // loadingObj.close()
+    ElMessage({
+        message: "出错啦！！！",
+        type: 'error',
+        duration: 1500,
+    })
+})
+
+// post封装
+export const post = config => {
+    return service({
+        ...config,
+        data: config.data,
+        method: 'POST'
+    })
+}
+
+// get封装
+export const get = config => {
+    return service({
+        ...config,
+        data: config.data,
+        method: 'GET'
+    })
+}
