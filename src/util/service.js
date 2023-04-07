@@ -60,7 +60,7 @@ export const post = config => {
 export const get = config => {
     return service({
         ...config,
-        data: config.data,
+        params: config.data,
         method: 'GET'
     })
 }

@@ -56,12 +56,14 @@
                 </el-menu>
             </el-aside>
             <el-main>
-            <el-breadcrumb :separator-icon="ArrowRight">
-                <el-breadcrumb-item v-for="route in routes" :key="route.path" :to="{ path: route.path }">
-                    {{ route.name }}
-                </el-breadcrumb-item>
-            </el-breadcrumb>
-                <router-view></router-view>
+                
+                <el-breadcrumb :separator-icon="ArrowRight">
+                    <el-breadcrumb-item v-for="route in routes" :key="route.path" :to="{ path: route.path }">
+                        {{ route.name }}
+                    </el-breadcrumb-item>
+                </el-breadcrumb>
+                <br />
+                    <router-view></router-view>
             </el-main>
         </el-container>
     </div>
@@ -72,18 +74,18 @@ import { ArrowRight } from '@element-plus/icons-vue'
 import { computed } from 'vue';
 import { useRouter } from "vue-router";
 const router = useRouter()
-console.log(router.currentRoute.value.matched)
-const routes = computed(()=>{
+// console.log(router.currentRoute.value.matched)
+const routes = computed(() => {
     // 过滤掉没有meta的 
     let ret = [];
-    router.currentRoute.value.matched.forEach(function(val, index) {
+    router.currentRoute.value.matched.forEach(function (val, index) {
         const route = {
             path: val.path,
             name: val.name,
         }
         ret.push(route)
     })
-    console.log(ret)
+    // console.log(ret)
     return ret
 })
 
