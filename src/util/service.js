@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { ElLoading } from 'element-plus'
+// import { ElLoading } from 'element-plus'
 import { ElMessage } from 'element-plus'
 
-const loadingObj = null
+// const loadingObj = null
 
 const service = axios.create({
     timeout: 5000,
@@ -13,16 +13,10 @@ const service = axios.create({
 })
 
 
-// 拦截请求，载入加载动画
-service.interceptors.request.use(config => {
-    // loadingObj = ElLoading.service({
-    //     lock: true,
-    //     text: '正在努力加载中！请稍微~',
-    //     background: 'rgba(0, 0, 0, 0.7)',
-    // })
-    // console.log("here")
-    return config
-})
+// // 拦截请求，载入加载动画
+// service.interceptors.request.use(config => {
+//     return config
+// })
 
 
 // 对每个响应进行预处理

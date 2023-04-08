@@ -113,7 +113,7 @@ const search = (arg) => {
     searchUser({
         token: login.token,
         username: arg,
-        page: 0
+        // paging: 0
     }).then(res => {
         tableData.value = res.data
     })

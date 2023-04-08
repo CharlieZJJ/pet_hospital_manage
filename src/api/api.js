@@ -41,3 +41,10 @@ export const removeIll = data => {
         data
     })
 }
+
+export const updateIll = data => {
+    return post({
+        url: '/illManage/illModify',
+        data
+    })
+}
