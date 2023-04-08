@@ -14,9 +14,9 @@ const service = axios.create({
 
 
 // // 拦截请求，载入加载动画
-// service.interceptors.request.use(config => {
-//     return config
-// })
+service.interceptors.request.use(config => {
+    return config
+})
 
 
 // 对每个响应进行预处理

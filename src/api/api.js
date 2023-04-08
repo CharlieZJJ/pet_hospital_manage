@@ -48,3 +48,17 @@ export const updateIll = data => {
         data
     })
 }
+
+export const getFileIds = data => {
+    return get({
+        url: '/illManage/getFileIDs',
+        data
+    })
+}
+
+export const fetchFile = data => {
+    return get({
+        url: '/illManage/getFile',
+        data
+    })
+}
