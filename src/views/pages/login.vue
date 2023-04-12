@@ -81,17 +81,17 @@ const handleLogin = () => {
 }
 
 onMounted(() => {
-    const log = store.state.userInfo;
-    if (log != null) {
-        loginBase(log.data)
-    }
+    // const log = store.state.userInfo;
+    // if (log != null) {
+    //     loginBase(log.data)
+    // }
 })
 
 const loginBase = (data) => {
     login(data).then(res => {
         const toStore = {
             data: data,
-            token: res.data.token
+            token: res.data.token,
         }
         store.commit('setUserInfo', toStore)
         localStorage.setItem("login", JSON.stringify(toStore))
