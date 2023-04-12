@@ -51,7 +51,7 @@ export const updateIll = data => {
 
 export const getFileIds = data => {
     return get({
-        url: '/illManage/getFileIDs',
+        url: '/illManage/getFileList',
         data
     })
 }
@@ -59,6 +59,16 @@ export const getFileIds = data => {
 export const fetchFile = data => {
     return get({
         url: '/illManage/getFile',
+        data
+    })
+}
+
+export const uploadFile = data => {
+    return post({
+        url: '/illManage/AddFile',
+        headers:{
+            'Content-Type':'multipart/form-data'
+        },
         data
     })
 }

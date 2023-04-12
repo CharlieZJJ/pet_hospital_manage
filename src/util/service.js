@@ -1,11 +1,9 @@
 import axios from 'axios'
-// import { ElLoading } from 'element-plus'
 import { ElMessage } from 'element-plus'
 
 // const loadingObj = null
 
 const service = axios.create({
-    timeout: 5000,
     baseURL: 'https://2663y694s3.zicp.vip/',
     headers: {
         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"

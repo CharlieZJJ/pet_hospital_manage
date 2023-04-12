@@ -126,7 +126,27 @@
                         </el-menu>
                     </el-header>
                     <el-main>
+                        <el-upload ref="uploadFileForm" action='#' :http-request="uploadAction" multiple :show-file-list="true"
+                            :auto-upload="true" style="width: 100%;" class="left-view">
+                            <el-button type="primary">点击上传</el-button>
+                        </el-upload>
                         <template v-if="mode == 0">
+                            <el-table :data="otherFileData" border stripe style="width: 100%"
+                                @selection-change="handleSelectionChange">
+                                <el-table-column type="selection" />
+                                <el-table-column prop="id" label="ID" width="70" />
+                                <el-table-column prop="name" label="文件名" />
+                                <el-table-column label="操作" align="center" width="190">
+                                    <template v-slot="scope">
+                                        <el-button type="primary" v-model="scope.row.id"
+                                            @click="handleClickFileDownload(scope.row)">
+                                            <el-icon>
+                                                <Download />
+                                            </el-icon>
+                                        </el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
                         </template>
                         <template v-else-if="mode == 1">
                             <div>
@@ -152,11 +172,43 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import { searchIll, addIll, removeIll, updateIll, getFileIds, fetchFile } from '@/api/api';
+import { searchIll, addIll, removeIll, updateIll, getFileIds, uploadFile } from '@/api/api';
 import { ElMessage } from 'element-plus';
+import { UploadFille } from '@element-plus/icons-vue'
 
 const store = useStore()
 const router = useRouter()
+
+const uploadFileForm = ref()
+
+
+const uploadAction = (option) => {
+    const login = store.getters.isLogIn;
+    if (!login.isLogIn) {
+        router.push('/login')
+    }
+    let filetype = 0
+    if (option.file.type === 'video/mp4') {
+        filetype = 2
+    } else if (option.file.type === 'image/jpeg' || option.file.type === 'image/jpg' || option.file.type == 'image/png') {
+        filetype = 1
+    } else {
+        filetype = 0
+    }
+
+    let param = new FormData()
+    param.append('file', option.file)
+    // param.append(currentFileProperty)
+    param.append('caseID', currentID.value)
+    param.append('casetype', currentCaseType.value)
+    param.append('filetype', filetype)
+    param.append('token', login.token)
+    uploadFile(param).then(res => {
+        if (res && res.success) {
+            ElMessage.success('上传成功！')
+        }
+    })
+}
 
 
 const fileDialog = ref(false)
@@ -202,52 +254,60 @@ const playerOptions = ref({
     notSupportedMessage: "此视频暂无法播放，请稍后再试", //允许覆盖Video.js无法播放媒体源时		
 })
 
+const otherFileData = ref([])
+
+const handleClickFileDownload = data => {
+    window.open('https://2663y694s3.zicp.vip/illManage/getFile?id=' + data.id, "_blank")
+}
+
 const handleSelectMenuH = (key, path) => {
 
     let base = 'https://2663y694s3.zicp.vip/illManage/getFile?id='
 
     if (key == 0) {
         mode.value = 0
+        otherFileData.value = []
+        fileIDList.value.other.forEach(elem => {
+            otherFileData.value.push(elem)
+        })
     } else if (key == 1) {
         mode.value = 1
         imgs.value = []
-        fileIDList.value.pic.forEach(id => {
-            imgs.value.push(base + id)
+        fileIDList.value.pic.forEach(elem => {
+            imgs.value.push(base + elem.id)
         })
-        // console.log('here')
-        // imgs.value.push(base + 27)
-        // imgs.value.push(base + 29)
     } else {
         mode.value = 2
         videos.value = []
-        fileIDList.value.video.forEach(id => {
+        fileIDList.value.video.forEach(elem => {
             videos.value.push({
                 type: "video/mp4",
-                src: base + id
+                src: base + elem.id
             })
         })
     }
 }
 
-
+const currentCaseType = ref(0)
 const handleSelectMenu = (key, path) => {
+    currentCaseType.value = parseInt(key)
     getFileIds({
         caseID: currentID.value,
-        casetype: parseInt(key),
+        casetype: currentCaseType.value,
         filetype: 0
     }).then(res => {
         fileIDList.value.other = res.data
     })
     getFileIds({
         caseID: currentID.value,
-        casetype: parseInt(key),
+        casetype: currentCaseType.value,
         filetype: 1
     }).then(res => {
         fileIDList.value.pic = res.data
     })
     getFileIds({
         caseID: currentID.value,
-        casetype: parseInt(key),
+        casetype: currentCaseType.value,
         filetype: 2
     }).then(res => {
         fileIDList.value.video = res.data
