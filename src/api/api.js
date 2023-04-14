@@ -91,3 +91,10 @@ export const deleteFile = data => {
         data
     })
 }
+
+export const searchQuestion = data => {
+    return post({
+        url: '/api/examination/question/page',
+        data
+    })
+}
