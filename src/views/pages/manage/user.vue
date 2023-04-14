@@ -1,12 +1,38 @@
 <template>
+  <div style="display: flex; justify-content: flex-end; align-items: center;margin-bottom: 30px" class="Touxiang">
+    <el-dropdown style="text-align: right">
+      <div class="account">
+        <img src="../../../../public/img/值班医生.png" alt="头像" class="touxiang"/>
+        <div style="font-weight: bolder;margin-top: 10px; "><div  style="color: aqua">{{wellCome}}</div></div>
+      </div>
+      <template #dropdown>
+        <el-dropdown-menu>
 
-  <div>
-    <div style="display: flex; justify-content: flex-end; align-items: center;margin-bottom: 20px;">
+          <el-dropdown-item @click="handleClickEdit">修改用户名</el-dropdown-item>
+          <el-dropdown-item @click="handleChangePassword">修改密码</el-dropdown-item>
+          <el-dropdown-item @click="logout">退出</el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
+  </div>
+  <el-card shadow="always" >
 
-      <el-input placeholder="请输入搜索关键字" v-model="arg" style="width: 300px" class="search-box"></el-input>
-      <el-button type="primary" style="margin-left: 10px;" @click="handleSearch">搜索</el-button>
+<!-- <div style="display:flex; justify-content: flex-end; align-items: center;margin-bottom: 20px;">-->
+
+<!--      <el-input placeholder="请输入搜索关键字" v-model="arg" style="width: 300px" class="search-box"></el-input>-->
+<!--      <el-button type="primary" style="margin-left: 10px;" @click="handleSearch">搜索</el-button>-->
+<!--    </div>-->
+    <div class="card-header" style="display: flex; justify-content: flex-end; align-items: center;">
+      <el-input v-model="arg" style="width: 500px;" placeholder="请输入关键字"><template #append>
+        <el-button type="primary" @click="handleSearch"><el-icon>
+          <Search />
+        </el-icon>搜索</el-button>
+      </template></el-input>&nbsp;&nbsp;&nbsp;
+
+
     </div>
-    <el-table :data="tableData" border stripe style="width: 100%, margin-top: 20px;">
+    <el-table :data="tableData" border stripe style="width: 100%; margin-top: 20px;" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" />
       <el-table-column prop="id" label="ID"></el-table-column>
       <el-table-column prop="name" label="用户名"></el-table-column>
       <el-table-column label="操作" align="center">
@@ -14,7 +40,7 @@
           <el-button
               type="primary"
               v-model="scope.row.id"
-              @click="handleClickEdit(scope.row)"
+              @click="handleClickUserType(scope.row)"
           >
             <el-icon>
               <Edit />
@@ -66,31 +92,111 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-  </div>
+    <el-dialog
+        v-model="dialogPasswordVisible"
+        title="修改密码"
+        width="30%"
+        center
+    >
+      <el-form
+          ref="editPasswordForm"
+          :model="editPassword"
+          status-icon
+          label-width="70px"
+      >
+        <el-form-item label="旧密码" prop="oldPassword">
+          <el-input v-model="editPassword.oldPassword" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input v-model="editPassword.newPassword" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleUpdatePasswordSubmit">提交</el-button>
+          <el-button type="primary" @click="handleUpdatePasswordReset">重置</el-button>
+          <el-button type="primary" @click="dialogPasswordVisible = false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    <el-dialog
+        v-model="dialogUserTypeVisible"
+        title="更改用户权限"
+        width="30%"
+        center
+    >
+      <el-form
+          ref="editUserTypeForm"
+          status-icon
+          label-width="70px"
+      >
+        <el-form-item>
+          <el-button type="success" @click="upManage">升为管理员</el-button>
+          <el-button type="danger" @click="downUser">置为普通用户</el-button>
+          <el-button type="primary" @click="dialogUserTypeVisible = false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </el-card>
 </template>
+
+<script>
+export default {
+  name:"userPage",
+  data:function() {
+    return{
+      wellCome: JSON.parse(localStorage.getItem('login')).data.username ,
+
+    }
+  },
+
+  methods: {
+    logout(){
+      console.log(localStorage.getItem('login'));
+      localStorage.removeItem('login');
+      console.log(localStorage.getItem('login'));
+      this.$router.push('/login');
+    },
+
+
+  },
+
+
+}
+</script>
+
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import { searchUser, updateUser } from '@/api/api';
+import {changePassword, searchUser, setUserType, updateUser} from '@/api/api';
+import {ElMessage} from "element-plus";
 
 const store = useStore()
 const router = useRouter()
-
+const wellCome=ref(JSON.parse(localStorage.getItem('login')).data.username)
 const pageSize = 5
 const tableData = ref([])
 const arg = ref('')
 const dialogVisible = ref(false)
-
+const dialogPasswordVisible=ref(false)
+const dialogUserTypeVisible=ref(false)
+const multipleSelection = ref([])
 const editData = ref({
   id: 0,
   name: '',
   nameBackup: ''
 })
+const userData = ref({
+  id: 0,
+  name: '',
+  })
 
 const editDataForm = ref()
-
+const editPassword=ref({
+  oldPassword:'',
+  newPassword:''
+})
+const editPasswordForm=ref()
 const currentPage = ref(1)
 const total = ref(0)
 
@@ -120,22 +226,125 @@ const handleUpdateSubmit = () => {
     newUsername: editData.value.name
   }).then(res => {
     dialogVisible.value = false;
+    const login = JSON.parse(localStorage.getItem('login') || '{}');
+    login.data.username = editData.value.name;
+    localStorage.setItem('login', JSON.stringify(login));
+    wellCome.value=editData.value.name
+    this.wellCome=editData.value.name;
+    this.$forceUpdate();
     search('%',currentPage.value)
   })
 }
 
+const handleUpdatePasswordSubmit = () => {
+  if(editPassword.value.oldPassword === editPassword.value.newPassword) {
+    dialogPasswordVisible.value = false;
+    return;
+  }
+
+  const login = store.getters.isLogIn;
+
+  if(!login.isLogIn) {
+    router.push('/login')
+  }
+  console.log(editData.value.name)
+  changePassword({
+    token: login.token,
+    oldPassword:editPassword.value.oldPassword,
+    newPassword: editPassword.value.newPassword
+  }).then(res => {
+    dialogPasswordVisible.value = false;
+    const login = JSON.parse(localStorage.getItem('login') || '{}');
+    if(res.success===true){
+      login.data.password = editPassword.value.newPassword;
+      localStorage.setItem('login', JSON.stringify(login));
+      ElMessage({
+        message: '修改成功',
+        type: 'success',
+      })
+    }
+
+  })
+}
+const upManage = () => {
+
+  const login = store.getters.isLogIn;
+
+  if(!login.isLogIn) {
+    router.push('/login')
+  }
+  console.log(editData.value.name)
+  setUserType({
+    token: login.token,
+    id:userData.value.id,
+    usertype:1
+  }).then(res => {
+    dialogUserTypeVisible.value = false;
+    const login = JSON.parse(localStorage.getItem('login') || '{}');
+    if(res.success===true){
+      ElMessage({
+        message: '设置成功',
+        type: 'success',
+      })
+    }
+
+  })
+}
+const downUser = () => {
+
+  const login = store.getters.isLogIn;
+
+  if(!login.isLogIn) {
+    router.push('/login')
+  }
+  console.log(editData.value.name)
+  setUserType({
+    token: login.token,
+    id:userData.value.id,
+    usertype:0
+  }).then(res => {
+    dialogUserTypeVisible.value = false;
+    const login = JSON.parse(localStorage.getItem('login') || '{}');
+    if(res.success===true){
+      ElMessage({
+        message: '设置成功',
+        type: 'success',
+      })
+    }
+
+  })
+}
+
+const handleUpdatePasswordReset = () => {
+  editPassword.value['newPassword'] = editPassword.value['oldPassword']
+
+}
 const handleUpdateReset = () => {
   editData.value['name'] = editData.value['nameBackup']
+
 }
 
 const handleClickEdit = (data) => {
   // console.log(data)
-  editData.value['id'] = data.id
-  editData.value['name'] = data.name
-  editData.value['nameBackup'] = data.name
+  const row=tableData.value.find(user => user.name === JSON.parse(localStorage.getItem('login')).data.username)
+  editData.value['id'] = row ? row.id : null;
+  editData.value['name'] =  JSON.parse(localStorage.getItem('login')).data.username
+  editData.value['nameBackup'] =  JSON.parse(localStorage.getItem('login')).data.username
   // console.log(editData.value)
   dialogVisible.value = true
 }
+const handleClickUserType = (data) => {
+  userData.value['id']=data.id
+  dialogUserTypeVisible.value=true
+}
+const handleChangePassword = (data) => {
+  // console.log(data)
+
+  editPassword.value['oldPassword']=JSON.parse(localStorage.getItem('login')).data.password
+  // console.log(editData.value)
+  dialogPasswordVisible.value = true
+}
+
 const handleDelete = (data) => {
   const index = tableData.value.findIndex(item => item.id === data.id)
   if (index !== -1) {
@@ -180,11 +389,34 @@ const handlePageChange = (newPage) => {
   currentPage.value = newPage
 }
 
+const handleSelectionChange = (val) => {
+  // console.log(val[0].id)
+    multipleSelection.value = []
+  val.forEach(elem => {
+    multipleSelection.value.push(elem.id)
+  })
+  // console.log(multipleSelection)
+}
+
+
+
 </script>
 
 
 <style scoped>
 .dialog-footer button:first-child {
     margin-right: 10px;
+}
+.Touxiang{
+  margin-left: 28vw;
+}
+
+.touxiang{
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  margin-top: 15px;
+
+  /*设为圆形*/
 }
 </style>

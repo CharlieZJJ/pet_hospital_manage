@@ -14,6 +14,13 @@ export const searchUser = data => {
     })
 }
 
+export const changePassword = data =>{
+    return post({
+        url:'/userManage/changePassword',
+        data
+    })
+}
+
 export const searchIll = data => {
     return get({
         url: '/illManage/illSearch',
@@ -27,7 +34,12 @@ export const updateUser = data => {
         data
     })
 }
-
+export const setUserType = data => {
+    return post({
+        url: '/userManage/setUserType',
+        data
+    })
+}
 export const addIll = data => {
     return post({
         url: '/illManage/illAdd',
