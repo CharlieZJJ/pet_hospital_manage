@@ -27,31 +27,6 @@
                             <el-menu-item index="/examination"> <el-icon>
                                     <DocumentChecked />
                                 </el-icon> 试卷管理</el-menu-item>
-                                
-                            <el-menu-item index="/role"> <el-icon>
-                                    <Stamp />
-                                </el-icon> 角色列表</el-menu-item>
-                                <el-menu-item index="/medicine"> <el-icon>
-                                    <Coin />
-                                </el-icon> 药品管理</el-menu-item>
-                            <el-menu-item index="/record"> <el-icon>
-                                    <DocumentRemove />
-                                </el-icon> 档案管理</el-menu-item>
-                            <el-menu-item index="/charge"> <el-icon>
-                                    <Checked />
-                                </el-icon> 收费管理</el-menu-item>
-                            <el-menu-item index="/laboratoryItem"> <el-icon>
-                                    <List />
-                                </el-icon> 化验项目管理</el-menu-item>
-                            <el-menu-item index="/vaccine"> <el-icon>
-                                    <Chicken />
-                                </el-icon> 疫苗管理</el-menu-item>
-                            <el-menu-item index="/hospitalized"> <el-icon>
-                                    <House />
-                                </el-icon> 住院管理</el-menu-item>
-                                <el-menu-item index="/illcaseStudy"> <el-icon>
-                                    <Document />
-                                </el-icon> 病例学习管理</el-menu-item>
                         </el-menu-item-group>
                     </el-sub-menu>
                 </el-menu>
