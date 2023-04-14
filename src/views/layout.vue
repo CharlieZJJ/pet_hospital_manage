@@ -3,43 +3,32 @@
         <el-container>
             <el-aside width="200px" class="common-aside">
                 <el-menu background-color="none" text-color="#fff" :router="true">
-                    <el-sub-menu index="1">
-                        <template #title>
-                            <el-icon>
-                                <Management />
-                            </el-icon>
-                            <!-- crud -->
-                            <span>管理</span>
-                        </template>
-                        <el-menu-item-group>
-                            <el-menu-item index="/user"> <el-icon>
-                                    <User />
-                                </el-icon> 用户管理</el-menu-item>
-                            <el-menu-item index="/illcase"> <el-icon>
-                                    <FirstAidKit />
-                                </el-icon> 病例管理</el-menu-item>
-                            <el-menu-item index="/cosplay"> <el-icon>
-                                    <UserFilled />
-                                </el-icon> 角色扮演管理</el-menu-item>
-                            <el-menu-item index="/questionbank"> <el-icon>
-                                    <SetUp />
-                                </el-icon> 题库管理</el-menu-item>
-                            <el-menu-item index="/examination"> <el-icon>
-                                    <DocumentChecked />
-                                </el-icon> 试卷管理</el-menu-item>
-                        </el-menu-item-group>
-                    </el-sub-menu>
+                    <el-menu-item index="/user"> <el-icon>
+                            <User />
+                        </el-icon> 用户管理</el-menu-item>
+                    <el-menu-item index="/illcase"> <el-icon>
+                            <FirstAidKit />
+                        </el-icon> 病例管理</el-menu-item>
+                    <el-menu-item index="/cosplay"> <el-icon>
+                            <UserFilled />
+                        </el-icon> 角色扮演管理</el-menu-item>
+                    <el-menu-item index="/questionbank"> <el-icon>
+                            <SetUp />
+                        </el-icon> 题库管理</el-menu-item>
+                    <el-menu-item index="/examination"> <el-icon>
+                            <DocumentChecked />
+                        </el-icon> 试卷管理</el-menu-item>
                 </el-menu>
             </el-aside>
             <el-main>
-                
+
                 <el-breadcrumb :separator-icon="ArrowRight">
                     <el-breadcrumb-item v-for="route in routes" :key="route.path" :to="{ path: route.path }">
                         {{ route.name }}
                     </el-breadcrumb-item>
                 </el-breadcrumb>
                 <br />
-                    <router-view></router-view>
+                <router-view></router-view>
             </el-main>
         </el-container>
     </div>

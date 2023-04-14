@@ -41,8 +41,8 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination :current-page="currentPage" :page-size="10" :total="total" :@current-change="handlePageChange"
-            layout="prev, pager, next"></el-pagination>
+        <el-pagination v-model:current-page="currentPage" :page-size="10" :background="background" 
+        layout="prev, pager, next, jumper" :total="total" @current-change="handlePageChange" />
         <el-dialog v-model="addIllDialog" title="添加新的病例" width="30%" center @close="handleAddIllDialogClose">
             <el-form ref="addIllForm" :model="addIllData" status-icon label-width="70px">
                 <el-form-item label="病例名" prop="name">
@@ -176,12 +176,6 @@
                                     </div>
                                 </el-col>
                             </el-row>
-                            <!-- <div v-for="video in videos">
-                                <video-player class="player" ref="videoPlayer" :options="playerOptions" :sources="video"
-                                    :playerOptions="true" style="height: 150px; width: 400px;">
-                                </video-player>
-                                <el-button type="danger" @click="handleRemoveVideo(video)">删除</el-button>
-                            </div> -->
                         </template>
                     </el-main>
                 </el-container>
@@ -577,7 +571,6 @@ watch(currentPage, (newValue) => {
 
 onMounted(() => {
     search('%', 0)
-    // console.log(tableData)
 })
 
 const search = (arg, page) => {
