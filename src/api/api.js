@@ -85,6 +85,44 @@ export const uploadFile = data => {
     })
 }
 
+export const searchPaper = data =>{
+    return post({
+        url:'/api/examination/paper/page',
+        data,
+        headers:{
+             'Content-Type':'application/json'
+        }
+    })
+}
+export const addPaper = data =>{
+    return post({
+        url:'/api/examination/paper/create',
+        data,
+        headers:{
+            'Content-Type':'application/json'
+        }
+    })
+}
+
+export const removePaper = data =>{
+    return post({
+        url:'/api/examination/paper/batchDelete',
+        data,
+        headers:{
+            'Content-Type':'application/json'
+        }
+    })
+}
+export const updatePaper = data =>{
+    return post({
+        url:'/api/examination/paper/update',
+        data,
+        headers:{
+            'Content-Type':'application/json'
+        }
+    })
+}
+
 export const deleteFile = data => {
     return post ({
         url: '/illManage/DeleteFile',

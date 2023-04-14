@@ -34,7 +34,8 @@
     <el-table :data="tableData" border stripe style="width: 100%; margin-top: 20px;" @selection-change="handleSelectionChange">
       <el-table-column type="selection" />
       <el-table-column prop="id" label="ID"></el-table-column>
-      <el-table-column prop="name" label="用户名"></el-table-column>
+      <el-table-column prop="username" label="用户名"></el-table-column>
+      <el-table-column prop="usertype" label="权限"></el-table-column>
       <el-table-column label="操作" align="center">
         <template v-slot="scope">
           <el-button
@@ -168,7 +169,7 @@ export default {
 import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import {changePassword, searchUser, setUserType, updateUser} from '@/api/api';
+import {changePassword, searchUser, setUserType, searchExam, updateUser} from '@/api/api';
 import {ElMessage} from "element-plus";
 
 const store = useStore()
@@ -226,13 +227,16 @@ const handleUpdateSubmit = () => {
     newUsername: editData.value.name
   }).then(res => {
     dialogVisible.value = false;
-    const login = JSON.parse(localStorage.getItem('login') || '{}');
-    login.data.username = editData.value.name;
-    localStorage.setItem('login', JSON.stringify(login));
-    wellCome.value=editData.value.name
-    this.wellCome=editData.value.name;
-    this.$forceUpdate();
-    search('%',currentPage.value)
+    console.log(res);
+    if(res.success===true){
+      const login = JSON.parse(localStorage.getItem('login') || '{}');
+      login.data.username = editData.value.name;
+      localStorage.setItem('login', JSON.stringify(login));
+      wellCome.value=editData.value.name;
+
+      search('%',currentPage.value)
+    }
+
   })
 }
 
@@ -282,6 +286,7 @@ const upManage = () => {
     dialogUserTypeVisible.value = false;
     const login = JSON.parse(localStorage.getItem('login') || '{}');
     if(res.success===true){
+      search('%',currentPage.value)
       ElMessage({
         message: '设置成功',
         type: 'success',
@@ -306,6 +311,7 @@ const downUser = () => {
     dialogUserTypeVisible.value = false;
     const login = JSON.parse(localStorage.getItem('login') || '{}');
     if(res.success===true){
+      search('%',currentPage.value)
       ElMessage({
         message: '设置成功',
         type: 'success',
@@ -326,11 +332,25 @@ const handleUpdateReset = () => {
 
 const handleClickEdit = (data) => {
   // console.log(data)
-  const row=tableData.value.find(user => user.name === JSON.parse(localStorage.getItem('login')).data.username)
-  editData.value['id'] = row ? row.id : null;
+  console.log(tableData);
+  const login = store.getters.isLogIn;
+      searchUser({
+        token: login.token,
+        username: '%',
+
+      }).then(res => {
+
+
+        console.log(res);
+        const row=res.data.find(user =>user.username === JSON.parse(localStorage.getItem('login')).data.username);
+        console.log(row);
+        editData.value['id'] = row ? row.id : null;
+      })
+
+
   editData.value['name'] =  JSON.parse(localStorage.getItem('login')).data.username
   editData.value['nameBackup'] =  JSON.parse(localStorage.getItem('login')).data.username
-  // console.log(editData.value)
+   console.log(editData.value)
   dialogVisible.value = true
 }
 const handleClickUserType = (data) => {
@@ -356,6 +376,17 @@ const handleDelete = (data) => {
 const search = (arg, page) => {
   if (arg === '') {
     arg = '%'
+    // searchExam({
+    //   ids:[0],
+    //   examTitle:"犬科考试",
+    //   start:0,
+    //   length:8000,
+    // }).then(
+    //     res =>{
+    //       console.log(res.message),
+    //           console.log(res.data)
+    //     }
+    // )
   }
   const login = store.getters.isLogIn;
   if (!login.isLogIn) {
@@ -368,9 +399,8 @@ const search = (arg, page) => {
   }).then(res => {
     tableData.value=[];
     let i,j=0;
-
     for(i = 0+(page-1)*pageSize,j=0;j<pageSize&&i<res.data.length;i++,j++){
-      tableData.value[j]=res.data[i];
+      tableData.value[j]= { id: res.data[i].id, username: res.data[i].username, usertype:res.data[i].usertype===1?"管理员":"普通用户" };
     }
     total.value = res.data.length
     console.log(tableData);

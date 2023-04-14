@@ -6,7 +6,7 @@ import { ElMessage } from 'element-plus'
 const service = axios.create({
     baseURL: 'https://2663y694s3.zicp.vip/',
     headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
+       "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
     }
 })
 
