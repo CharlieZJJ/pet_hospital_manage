@@ -25,12 +25,6 @@ const routes = [
         name: 'illcase',
         component: () => import('../views/pages/manage/illcase.vue')
       },
-      // worker
-      {
-        path: '/worker',
-        name: 'worker',
-        component: () => import('../views/pages/manage/worker.vue')
-      },
       // medicine
       {
         path: '/medicine',

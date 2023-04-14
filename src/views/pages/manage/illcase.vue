@@ -16,11 +16,11 @@
         <el-table :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" />
             <el-table-column prop="id" label="ID" width="70" />
-            <el-table-column prop="name" label="病例名称" />
-            <el-table-column prop="reception" label="接诊" />
-            <el-table-column prop="examination" label="检验" />
-            <el-table-column prop="diagnostic" label="诊断" />
-            <el-table-column prop="treatment" label="治疗" />
+            <el-table-column prop="name" label="病例名称" show-overflow-tooltip="true" />
+            <el-table-column prop="reception" label="接诊" show-overflow-tooltip="true" />
+            <el-table-column prop="examination" label="检验" show-overflow-tooltip="true" />
+            <el-table-column prop="diagnostic" label="诊断" show-overflow-tooltip="true" />
+            <el-table-column prop="treatment" label="治疗" show-overflow-tooltip="true" />
             <el-table-column label="操作" align="center" width="190">
                 <template v-slot="scope">
                     <el-button type="primary" v-model="scope.row.id" @click="handleClickEdit(scope.row)">
@@ -41,9 +41,9 @@
                 </template>
             </el-table-column>
         </el-table>
-        <!-- <el-pagination v-model:current-page="currentPage1" :page-size="10" :small="small" layout="total, prev, pager, next" :total="100" @size-change="handleSizeChange"
-            @current-change="handleCurrentChange" /> -->
-        <el-dialog v-model="addIllDialog" title="添加新的病例" width="30%" center>
+        <el-pagination :current-page="currentPage" :page-size="10" :total="total" :@current-change="handlePageChange"
+            layout="prev, pager, next"></el-pagination>
+        <el-dialog v-model="addIllDialog" title="添加新的病例" width="30%" center @close="handleAddIllDialogClose">
             <el-form ref="addIllForm" :model="addIllData" status-icon label-width="70px">
                 <el-form-item label="病例名" prop="name">
                     <el-input v-model="addIllData.name" autocomplete="off" />
@@ -63,11 +63,10 @@
                 <el-form-item>
                     <el-button type="primary" @click="handleAddSubmit">提交</el-button>
                     <el-button type="primary" @click="handleAddReset">重置</el-button>
-                    <el-button type="primary" @click="handleAddCancle">取消</el-button>
                 </el-form-item>
             </el-form>
         </el-dialog>
-        <el-dialog v-model="updateIllDialog" title="添加新的病例" width="30%" center>
+        <el-dialog v-model="updateIllDialog" title="更新病例" width="30%" center @close="handleUpdateIllDialogClose">
             <el-form ref="updateIllForm" :model="updateIllData" status-icon label-width="70px">
                 <el-form-item label="ID" prop="id">
                     <el-input v-model="updateIllData.id" autocomplete="off" disabled />
@@ -90,11 +89,10 @@
                 <el-form-item>
                     <el-button type="primary" @click="handleUpdateSubmit">提交</el-button>
                     <el-button type="primary" @click="handleUpdateReset">重置</el-button>
-                    <el-button type="primary" @click="updateIllDialog = false">取消</el-button>
                 </el-form-item>
             </el-form>
         </el-dialog>
-        <el-dialog v-model="fileDialog" title="查看文件" width="60%" center>
+        <el-dialog v-model="fileDialog" title="查看文件" width="60%" center @close="handleFileDialogClose">
             <el-container>
                 <el-aside width="100px">
                     <el-menu default-active="0" :collapse="true" @select="handleSelectMenu">
@@ -113,7 +111,7 @@
                     </el-menu></el-aside>
                 <el-container>
                     <el-header>
-                        <el-menu default-active="0" mode="horizontal" @select="handleSelectMenuH">
+                        <el-menu :default-active="mode" mode="horizontal" @select="handleSelectHorizontalMenu">
                             <el-menu-item index="0">
                                 其他
                             </el-menu-item>
@@ -126,8 +124,8 @@
                         </el-menu>
                     </el-header>
                     <el-main>
-                        <el-upload ref="uploadFileForm" action='#' :http-request="uploadAction" multiple :show-file-list="true"
-                            :auto-upload="true" style="width: 100%;" class="left-view">
+                        <el-upload v-if="mode != 1" ref="uploadFileForm" action='#' :http-request="uploadAction" multiple
+                            :show-file-list="true" :auto-upload="true" style="width: 100%;" class="left-view">
                             <el-button type="primary">点击上传</el-button>
                         </el-upload>
                         <template v-if="mode == 0">
@@ -144,22 +142,46 @@
                                                 <Download />
                                             </el-icon>
                                         </el-button>
+                                        <el-button type="danger" v-model="scope.row.id"
+                                            @click="handleClickFileDelete(scope.row)">
+                                            <el-icon>
+                                                <Delete />
+                                            </el-icon>
+                                        </el-button>
                                     </template>
                                 </el-table-column>
                             </el-table>
                         </template>
                         <template v-else-if="mode == 1">
-                            <div>
-                                <el-image style="width: 100%; height: 100%" :src="imgs[0]" :zoom-rate="1.2"
-                                    :preview-src-list="imgs" :initial-index="0" fit="cover" />
-                            </div>
+                            <el-upload v-model:file-list="imgs" :http-request="uploadAction" list-type="picture-card"
+                                :on-preview="handleImagePreview" :on-remove="hangleImageDelete">
+                                <el-icon>
+                                    <Plus />
+                                </el-icon>
+                            </el-upload>
+
+                            <el-dialog v-model="imagePreviewDialog">
+                                <el-image :src="imagePreviewUrl" :zoom-rate="1.2"
+                                    :preview-src-list="Array.of(imagePreviewUrl)" :initial-index="0" />
+                            </el-dialog>
                         </template>
                         <template v-else>
-                            <div v-for="video in videos">
+                            <el-row :gutter="20" v-for="video in videos">
+                                <el-col :span="12">
+                                    <div class="grid-content ep-bg-purple">
+                                        <video-player ref="videoPlayer" :options="playerOptions" :sources="video"
+                                            :playerOptions="true">
+                                        </video-player>
+                                        <el-button type="danger" @click="handleRemoveVideo(video)">删除</el-button>
+                                    </div>
+                                </el-col>
+                            </el-row>
+                            <!-- <div v-for="video in videos">
                                 <video-player class="player" ref="videoPlayer" :options="playerOptions" :sources="video"
-                                    :playerOptions="true">
+                                    :playerOptions="true" style="height: 150px; width: 400px;">
                                 </video-player>
-                            </div>
+                                <el-button type="danger" @click="handleRemoveVideo(video)">删除</el-button>
+                            </div> -->
                         </template>
                     </el-main>
                 </el-container>
@@ -169,19 +191,92 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import { searchIll, addIll, removeIll, updateIll, getFileIds, uploadFile } from '@/api/api';
+import { searchIll, addIll, removeIll, updateIll, getFileIds, uploadFile, deleteFile } from '@/api/api';
 import { ElMessage } from 'element-plus';
-import { UploadFille } from '@element-plus/icons-vue'
 
 const store = useStore()
 const router = useRouter()
 
+/**
+ * 文件操作
+ */
+const handleRemoveVideo = (video) => {
+    let id = video.src.substr(video.src.indexOf('id=') + 3)
+    const login = store.getters.isLogIn;
+    if (!login.isLogIn) {
+        router.push('/login')
+    }
+    deleteFile({
+        id: id,
+        token: login.token
+    }).then(res => {
+        ElMessage.success('删除成功！')
+
+    })
+}
+
+const handleFileDialogClose = () => {
+    videos.value = []
+    imgs.value = []
+    otherFileData.value = []
+    mode.value = 0
+    currentID.value = 0;
+    currentCaseType.value = 0;
+    fileDialog.value = false;
+}
+
+const imagePreviewDialog = ref(false)
+const imagePreviewUrl = ref('')
+const handleImagePreview = (file) => {
+    imagePreviewDialog.value = true
+    imagePreviewUrl.value = file.url
+}
+
+const hangleImageDelete = (file) => {
+    let id = file.url.substr(file.url.indexOf('id=') + 3);
+    const login = store.getters.isLogIn;
+    if (!login.isLogIn) {
+        router.push('/login')
+    }
+    deleteFile({
+        id: id,
+        token: login.token
+    }).then(res => {
+        ElMessage.success('删除成功！')
+
+    })
+}
+
+const handleClickFileDelete = data => {
+    let id = data.id;
+    const login = store.getters.isLogIn;
+    if (!login.isLogIn) {
+        router.push('/login')
+    }
+    deleteFile({
+        id: id,
+        token: login.token
+    }).then(res => {
+        ElMessage.success('删除成功！')
+        getFileIds({
+            caseID: currentID.value,
+            casetype: currentCaseType.value,
+            filetype: 0
+        }).then(res => {
+            fileIDList.value.other = res.data
+        })
+        otherFileData.value.map((val, pos) => {
+            if (val.id == id) {
+                otherFileData.value.splice(pos, 1);
+            }
+        })
+    })
+}
+
 const uploadFileForm = ref()
-
-
 const uploadAction = (option) => {
     const login = store.getters.isLogIn;
     if (!login.isLogIn) {
@@ -198,7 +293,6 @@ const uploadAction = (option) => {
 
     let param = new FormData()
     param.append('file', option.file)
-    // param.append(currentFileProperty)
     param.append('caseID', currentID.value)
     param.append('casetype', currentCaseType.value)
     param.append('filetype', filetype)
@@ -208,24 +302,101 @@ const uploadAction = (option) => {
             ElMessage.success('上传成功！')
         }
     })
+    getFileIds({
+        caseID: currentID.value,
+        casetype: currentCaseType.value,
+        filetype: filetype
+    }).then(res => {
+
+        if (filetype == 0) {
+            fileIDList.value.other = res.data
+        } else if (filetype == 1) {
+            fileIDList.value.imgs = res.data
+        } else {
+            fileIDList.value.video = res.data
+        }
+    })
 }
 
 
 const fileDialog = ref(false)
-const fileIDList = ref({
-    other: [],
-    pic: [],
-    video: [],
-})
+
 const currentID = ref(0)
+const currentCaseType = ref(0)
 const mode = ref(0)
 
 const imgs = ref([])
 const videos = ref([])
+const otherFileData = ref([])
 
 const handleFile = val => {
     fileDialog.value = true
     currentID.value = val.id
+    handleSelectMenu(currentCaseType.value, null)
+    // console.log('here')
+}
+
+const handleSelectMenu = (key, path) => {
+    currentCaseType.value = parseInt(key)
+    mode.value = 0
+    getFileIds({
+        caseID: currentID.value,
+        casetype: currentCaseType.value,
+        filetype: mode.value
+    }).then(res => {
+        otherFileData.value = []
+        for (let i = 0; i < res.data.length; i++) {
+            otherFileData.value.push(res.data[i])
+        }
+    })
+}
+
+const handleSelectHorizontalMenu = (key, path) => {
+    let base = 'https://2663y694s3.zicp.vip/illManage/getFile?id=';
+    if (key == 0) {
+        mode.value = 0
+        getFileIds({
+            caseID: currentID.value,
+            casetype: currentCaseType.value,
+            filetype: mode.value
+        }).then(res => {
+            otherFileData.value = []
+            for (let i = 0; i < res.data.length; i++) {
+                otherFileData.value.push(res.data[i])
+            }
+        })
+    } else if (key == 1) {
+        mode.value = 1
+        getFileIds({
+            caseID: currentID.value,
+            casetype: currentCaseType.value,
+            filetype: mode.value
+        }).then(res => {
+            imgs.value = []
+            for (let i = 0; i < res.data.length; i++) {
+                imgs.value.push({
+                    name: res.data[i].name,
+                    url: base + res.data[i].id
+                })
+            }
+        })
+    } else {
+        mode.value = 2
+        videos.value = []
+        getFileIds({
+            caseID: currentID.value,
+            casetype: currentCaseType.value,
+            filetype: mode.value
+        }).then(res => {
+            videos.value = []
+            for (let i = 0; i < res.data.length; i++) {
+                videos.value.push({
+                    type: 'video/mp4',
+                    src: base + res.data[i].id
+                })
+            }
+        })
+    }
 }
 
 const playerOptions = ref({
@@ -249,82 +420,27 @@ const playerOptions = ref({
         progressControl: true, // 进度条
         fullscreenToggle: true, // 全屏按钮
     },
-    poster: "https://pixabay.com/zh/illustrations/youtube-video-icon-play-button-1834016/", //你的封面地址
+    poster: '', //你的封面地址
     width: document.documentElement.clientWidth,
     notSupportedMessage: "此视频暂无法播放，请稍后再试", //允许覆盖Video.js无法播放媒体源时		
 })
 
-const otherFileData = ref([])
 
 const handleClickFileDownload = data => {
     window.open('https://2663y694s3.zicp.vip/illManage/getFile?id=' + data.id, "_blank")
 }
 
-const handleSelectMenuH = (key, path) => {
 
-    let base = 'https://2663y694s3.zicp.vip/illManage/getFile?id='
-
-    if (key == 0) {
-        mode.value = 0
-        otherFileData.value = []
-        fileIDList.value.other.forEach(elem => {
-            otherFileData.value.push(elem)
-        })
-    } else if (key == 1) {
-        mode.value = 1
-        imgs.value = []
-        fileIDList.value.pic.forEach(elem => {
-            imgs.value.push(base + elem.id)
-        })
-    } else {
-        mode.value = 2
-        videos.value = []
-        fileIDList.value.video.forEach(elem => {
-            videos.value.push({
-                type: "video/mp4",
-                src: base + elem.id
-            })
-        })
-    }
-}
-
-const currentCaseType = ref(0)
-const handleSelectMenu = (key, path) => {
-    currentCaseType.value = parseInt(key)
-    getFileIds({
-        caseID: currentID.value,
-        casetype: currentCaseType.value,
-        filetype: 0
-    }).then(res => {
-        fileIDList.value.other = res.data
-    })
-    getFileIds({
-        caseID: currentID.value,
-        casetype: currentCaseType.value,
-        filetype: 1
-    }).then(res => {
-        fileIDList.value.pic = res.data
-    })
-    getFileIds({
-        caseID: currentID.value,
-        casetype: currentCaseType.value,
-        filetype: 2
-    }).then(res => {
-        fileIDList.value.video = res.data
-    })
-}
-
-
-
+/**
+ * 删除病例和批量删除
+ */
 const multipleSelection = ref([])
 
 const handleSelectionChange = (val) => {
-    // console.log(val[0].id)
     multipleSelection.value = []
     val.forEach(elem => {
         multipleSelection.value.push(elem.id)
     })
-    // console.log(multipleSelection)
 }
 
 const handleDelete = data => {
@@ -340,7 +456,7 @@ const handleDelete = data => {
             message: '删除成功',
             type: 'success',
         })
-        location.reload()
+        search('%', 0)
     })
 }
 
@@ -349,19 +465,23 @@ const handleIllDeleteBatch = () => {
     if (!login.isLogIn) {
         router.push('/login')
     }
-    multipleSelection.value.forEach(ele => {
+    console.log(multipleSelection.value)
+    for (let i = 0; i < multipleSelection.value.length; i++) {
         removeIll({
             token: login.token,
-            id: ele
+            id: multipleSelection.value[i]
         })
-    })
+    }
     ElMessage({
         message: '删除成功',
         type: 'success',
     })
-    location.reload()
+    search('%', 0)
 }
 
+/**
+ * 更新病例
+ */
 const updateIllDialog = ref(false)
 const updateIllForm = ref()
 const updateIllData = ref({
@@ -379,6 +499,21 @@ const updateIllData = ref({
         treatment: '',
     }
 })
+
+
+const handleUpdateIllDialogClose = () => {
+    updateIllData.value.id = ''
+    updateIllData.value.name = ''
+    updateIllData.value.reception = ''
+    updateIllData.value.examination = ''
+    updateIllData.value.diagnostic = ''
+    updateIllData.value.treatment = ''
+    updateIllData.value.backup.name = ''
+    updateIllData.value.backup.reception = ''
+    updateIllData.value.backup.examination = ''
+    updateIllData.value.backup.diagnostic = ''
+    updateIllData.value.backup.treatment = ''
+}
 
 const handleClickEdit = data => {
     updateIllData.value.id = data.id
@@ -409,7 +544,8 @@ const handleUpdateSubmit = () => {
             message: '修改成功',
             type: 'success',
         })
-        location.reload()
+        updateIllDialog.value = false;
+        search('%', 0)
     })
 }
 
@@ -422,15 +558,29 @@ const handleUpdateReset = () => {
 }
 
 
+/**
+ * 搜索病例
+ */
 const tableData = ref([])
 const arg = ref('')
 
+const total = ref(0)
+const currentPage = ref(1)
+const handlePageChange = data => {
+    currentPage.value = data
+}
+
+watch(currentPage, (newValue) => {
+    search(arg.value, newValue - 1)
+})
+
+
 onMounted(() => {
-    search('%')
+    search('%', 0)
     // console.log(tableData)
 })
 
-const search = (arg) => {
+const search = (arg, page) => {
     if (arg === '') {
         arg = '%'
     }
@@ -440,9 +590,12 @@ const search = (arg) => {
     }
     searchIll({
         name: arg,
+        paging: page
     }).then(res => {
         tableData.value = res.data
-        // console.log(tableData.value);
+        total.value = res.totalpages * 10
+        // console.log(res)
+        console.log(total.value);
     })
 }
 
@@ -464,7 +617,9 @@ const handleSearchIll = () => {
     }
 }
 
-
+/**
+ * 添加新的病例
+ */
 const addIllDialog = ref(false)
 const addIllForm = ref()
 const addIllData = ref({
@@ -474,6 +629,16 @@ const addIllData = ref({
     diagnostic: '',
     treatment: ''
 })
+
+
+const handleAddIllDialogClose = () => {
+    addIllData.value.name = ''
+    addIllData.value.reception = ''
+    addIllData.value.examination = ''
+    addIllData.value.diagnostic = ''
+    addIllData.value.treatment = ''
+}
+
 
 const handleAddSubmit = () => {
     const login = store.getters.isLogIn;
@@ -493,7 +658,7 @@ const handleAddSubmit = () => {
             type: 'success',
         })
         addIllDialog.value = false;
-        location.reload()
+        search('%', 0)
     })
 }
 
@@ -505,14 +670,6 @@ const handleAddReset = () => {
     addIllData.value.treatment = ''
 }
 
-const handleAddCancle = () => {
-    addIllData.value = false
-    addIllData.value.name = ''
-    addIllData.value.reception = ''
-    addIllData.value.examination = ''
-    addIllData.value.diagnostic = ''
-    addIllData.value.treatment = ''
-}
 
 </script>
 
@@ -522,5 +679,20 @@ const handleAddCancle = () => {
     justify-content: end;
     align-items: center;
     margin-bottom: 8px;
+}
+
+.demo-image__lazy {
+    height: 400px;
+    overflow-y: auto;
+}
+
+.demo-image__lazy .el-image {
+    display: block;
+    min-height: 200px;
+    margin-bottom: 10px;
+}
+
+.demo-image__lazy .el-image:last-child {
+    margin-bottom: 0;
 }
 </style>

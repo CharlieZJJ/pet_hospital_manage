@@ -18,7 +18,20 @@
                             <el-menu-item index="/illcase"> <el-icon>
                                     <FirstAidKit />
                                 </el-icon> 病例管理</el-menu-item>
-                            <el-menu-item index="/medicine"> <el-icon>
+                            <el-menu-item index="/cosplay"> <el-icon>
+                                    <UserFilled />
+                                </el-icon> 角色扮演管理</el-menu-item>
+                            <el-menu-item index="/questionbank"> <el-icon>
+                                    <SetUp />
+                                </el-icon> 题库管理</el-menu-item>
+                            <el-menu-item index="/examination"> <el-icon>
+                                    <DocumentChecked />
+                                </el-icon> 试卷管理</el-menu-item>
+                                
+                            <el-menu-item index="/role"> <el-icon>
+                                    <Stamp />
+                                </el-icon> 角色列表</el-menu-item>
+                                <el-menu-item index="/medicine"> <el-icon>
                                     <Coin />
                                 </el-icon> 药品管理</el-menu-item>
                             <el-menu-item index="/record"> <el-icon>
@@ -36,21 +49,9 @@
                             <el-menu-item index="/hospitalized"> <el-icon>
                                     <House />
                                 </el-icon> 住院管理</el-menu-item>
-                            <el-menu-item index="/cosplay"> <el-icon>
-                                    <UserFilled />
-                                </el-icon> 角色扮演管理</el-menu-item>
-                            <el-menu-item index="/illcaseStudy"> <el-icon>
+                                <el-menu-item index="/illcaseStudy"> <el-icon>
                                     <Document />
                                 </el-icon> 病例学习管理</el-menu-item>
-                            <el-menu-item index="/questionbank"> <el-icon>
-                                    <SetUp />
-                                </el-icon> 题库管理</el-menu-item>
-                            <el-menu-item index="/examination"> <el-icon>
-                                    <DocumentChecked />
-                                </el-icon> 试卷管理</el-menu-item>
-                            <el-menu-item index="/role"> <el-icon>
-                                    <Stamp />
-                                </el-icon> 角色列表</el-menu-item>
                         </el-menu-item-group>
                     </el-sub-menu>
                 </el-menu>

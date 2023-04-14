@@ -72,3 +72,10 @@ export const uploadFile = data => {
         data
     })
 }
+
+export const deleteFile = data => {
+    return post ({
+        url: '/illManage/DeleteFile',
+        data
+    })
+}
