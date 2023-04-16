@@ -84,7 +84,15 @@ export const uploadFile = data => {
         data
     })
 }
-
+export const searchQuestion = data =>{
+    return post({
+        url:'/api/examination/question/page',
+        data,
+        headers:{
+            'Content-Type':'application/json'
+        }
+    })
+}
 export const searchPaper = data =>{
     return post({
         url:'/api/examination/paper/page',
@@ -130,9 +138,3 @@ export const deleteFile = data => {
     })
 }
 
-export const searchQuestion = data => {
-    return post({
-        url: '/api/examination/question/page',
-        data
-    })
-}
