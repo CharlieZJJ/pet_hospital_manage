@@ -85,7 +85,8 @@ export const uploadFile = data => {
     })
 }
 
-export const searchPaper = data => {
+
+export const searchPaper = data =>{
     return post({
         url: '/api/examination/paper/page',
         data,

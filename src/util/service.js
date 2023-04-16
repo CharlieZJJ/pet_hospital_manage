@@ -32,11 +32,11 @@ service.interceptors.response.use(response => {
     return data
 }, err => {
     // loadingObj.close()
-    ElMessage({
-        message: "出错啦！！！",
-        type: 'error',
-        duration: 1500,
-    })
+    // ElMessage({
+    //     message: "出错啦！！！",
+    //     type: 'error',
+    //     duration: 1500,
+    // })
 })
 
 // post封装
@@ -56,3 +56,11 @@ export const get = config => {
         method: 'GET'
     })
 }
+// Error log statistic
+// window.addEventListener('error', function onError(e) {
+//     // Ignore ResizeObserver error
+//     if (e.message === 'ResizeObserver loop limit exceeded') {
+//         e.stopPropagation();
+//         e.stopImmediatePropagation();
+//     }
+// });

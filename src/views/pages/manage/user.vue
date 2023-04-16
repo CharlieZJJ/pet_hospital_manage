@@ -175,7 +175,7 @@ import {ElMessage} from "element-plus";
 const store = useStore()
 const router = useRouter()
 const wellCome=ref(JSON.parse(localStorage.getItem('login')).data.username)
-const pageSize = 5
+
 const tableData = ref([])
 const arg = ref('')
 const dialogVisible = ref(false)
@@ -200,7 +200,7 @@ const editPassword=ref({
 const editPasswordForm=ref()
 const currentPage = ref(1)
 const total = ref(0)
-
+const pageSize = 5
 onMounted(() => {
   search('%', currentPage.value)
 })
