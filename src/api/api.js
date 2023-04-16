@@ -1,4 +1,4 @@
-import {post, get} from '../util/service.js'
+import { post, get } from '../util/service.js'
 
 export const login = data => {
     return post({
@@ -14,9 +14,9 @@ export const searchUser = data => {
     })
 }
 
-export const changePassword = data =>{
+export const changePassword = data => {
     return post({
-        url:'/userManage/changePassword',
+        url: '/userManage/changePassword',
         data
     })
 }
@@ -78,53 +78,53 @@ export const fetchFile = data => {
 export const uploadFile = data => {
     return post({
         url: '/illManage/AddFile',
-        headers:{
-            'Content-Type':'multipart/form-data'
+        headers: {
+            'Content-Type': 'multipart/form-data'
         },
         data
     })
 }
 
-export const searchPaper = data =>{
+export const searchPaper = data => {
     return post({
-        url:'/api/examination/paper/page',
+        url: '/api/examination/paper/page',
         data,
-        headers:{
-             'Content-Type':'application/json'
+        headers: {
+            'Content-Type': 'application/json'
         }
     })
 }
-export const addPaper = data =>{
+export const addPaper = data => {
     return post({
-        url:'/api/examination/paper/create',
+        url: '/api/examination/paper/create',
         data,
-        headers:{
-            'Content-Type':'application/json'
+        headers: {
+            'Content-Type': 'application/json'
         }
     })
 }
 
-export const removePaper = data =>{
+export const removePaper = data => {
     return post({
-        url:'/api/examination/paper/batchDelete',
+        url: '/api/examination/paper/batchDelete',
         data,
-        headers:{
-            'Content-Type':'application/json'
+        headers: {
+            'Content-Type': 'application/json'
         }
     })
 }
-export const updatePaper = data =>{
+export const updatePaper = data => {
     return post({
-        url:'/api/examination/paper/update',
+        url: '/api/examination/paper/update',
         data,
-        headers:{
-            'Content-Type':'application/json'
+        headers: {
+            'Content-Type': 'application/json'
         }
     })
 }
 
 export const deleteFile = data => {
-    return post ({
+    return post({
         url: '/illManage/DeleteFile',
         data
     })
@@ -133,6 +133,39 @@ export const deleteFile = data => {
 export const searchQuestion = data => {
     return post({
         url: '/api/examination/question/page',
-        data
+        data,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+export const addQuestion = data => {
+    return post({
+        url: '/api/examination/question/create',
+        data,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+export const updateQuestion = data => {
+    return post({
+        url: '/api/examination/question/update',
+        data,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+export const removeQuestion = data => {
+    return post({
+        url: '/api/examination/question/batchDelete',
+        data,
+        headers: {
+            'Content-Type': 'application/json'
+        }
     })
 }

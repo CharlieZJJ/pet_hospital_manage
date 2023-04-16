@@ -21,7 +21,7 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(response => {
     // loadingObj.close()
     const data = response.data
-    if(!data.success) {
+    if(!data.success && data.message != 'success' && data.message != '成功') {
         ElMessage({
             message: "出错啦！！！",
             type: 'error',
