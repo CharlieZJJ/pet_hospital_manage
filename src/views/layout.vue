@@ -9,9 +9,6 @@
                     <el-menu-item index="/illcase"> <el-icon>
                             <FirstAidKit />
                         </el-icon> 病例管理</el-menu-item>
-                    <el-menu-item index="/cosplay"> <el-icon>
-                            <UserFilled />
-                        </el-icon> 角色扮演管理</el-menu-item>
                     <el-menu-item index="/questionbank"> <el-icon>
                             <SetUp />
                         </el-icon> 题库管理</el-menu-item>

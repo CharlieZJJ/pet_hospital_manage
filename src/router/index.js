@@ -25,12 +25,6 @@ const routes = [
         name: 'illcase',
         component: () => import('../views/pages/manage/illcase.vue')
       },
-      // cosplay
-      {
-        path: '/cosplay',
-        name: 'cosplay',
-        component: () => import('../views/pages/manage/cosplay.vue')
-      },
       // questionbank
       {
         path: '/questionbank',

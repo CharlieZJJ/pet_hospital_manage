@@ -58,7 +58,7 @@
                 <div v-for="(option, index) in addQuestionData.options">
                     <el-form-item :label="'选项 ' + String.fromCharCode(index + 65)" prop="option">
                         <div class="card-header">
-                            <el-input v-model="option.option" autocomplete="off" style="width: 540px;" /> &nbsp;
+                            <el-input v-model="option.option" autocomplete="off" style="width: 100%;" /> &nbsp;
                             <el-button :type="btn[index].type" @click="handleAddQuestionRight(index)"><span
                                     v-html="btn[index].msg"></span></el-button>
                         </div>
@@ -384,7 +384,7 @@ const handleAddSubmit = () => {
         router.push('/login')
     }
     addQuestion(addQuestionData.value).then(res => {
-        ElMessage.success("添加成功~")
+        
     })
     handleAddQuestionDialogClose()
     searchDefault()
@@ -419,29 +419,32 @@ const arg = ref({
 })
 
 const handleQuestionSearch = () => {
+    // console.log("arg", arg.value)
+    arg.value.start = (currentPage.value - 1) * 10
+    console.log(arg.value)
     search(arg.value)
 }
 
 const tableData = ref([])
 
 
-const illCaseTypeMap = ["接诊", "检验", "诊断", "治疗"]
+const illCaseTypeMap = ["", "接诊", "检验", "诊断", "治疗"]
 
 const illCaseTypes = [
     {
-        value: 0,
+        value: 1,
         label: "接诊",
     },
     {
-        value: 1,
+        value: 2,
         label: "检验",
     },
     {
-        value: 2,
+        value: 3,
         label: "诊断",
     },
     {
-        value: 3,
+        value: 4,
         label: "治疗",
     },
 ]
@@ -458,17 +461,16 @@ const search = data => {
         start: data.start,
         length: data.length
     }).then(res => {
-        tableData.value = res.data.map(ele => {
-            return {
+        tableData.value = []
+        for(var ele of res.data) {
+            tableData.value.push({
                 id: ele.id,
                 context: ele.context,
                 options: ele.options,
                 illCaseType: illCaseTypeMap[ele.illCaseType]
-            }
-        })
+            })
+        }
         total.value = res.recordsTotal
-        console.log(tableData)
-        // console.log(tableData.value)
     })
 }
 
