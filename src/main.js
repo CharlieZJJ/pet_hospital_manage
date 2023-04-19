@@ -8,11 +8,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 import VideoPlayer from 'vue-video-player'
 import 'video.js/dist/video-js.css'
-<<<<<<< HEAD
-// import 'vue-video-player/src/custom-theme.css'
-=======
 //import 'vue-video-player/src/custom-theme.css'
->>>>>>> 2bd4b242b807bfd048cba45f7aa928b57775223d
 
 const app = createApp(App)
 
