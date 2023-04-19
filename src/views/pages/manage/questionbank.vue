@@ -16,8 +16,8 @@
                 </el-icon>删除</el-button>
         </div>
         <el-table :data="tableData" border stripe style="width: 100%" height="460" @selection-change="handleSelectionChange"
-            :cell-style="handleCellStyle">
-            <el-table-column type="selection" align="center" />
+            :cell-style="handleCellStyle" row-key="id">
+            <el-table-column type="selection" align="center" reserve-selection/>
             <el-table-column prop="id" label="ID" width="70" align="center" />
             <el-table-column prop="context" label="题目" align="center" show-overflow-tooltip="true"/>
             <el-table-column label="选项" align="center">
