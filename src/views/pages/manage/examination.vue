@@ -14,7 +14,7 @@
       </el-icon>删除</el-button>
     </div>
     <el-table :data="tableData" border stripe style="width: 100%" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" />
+      <el-table-column type="selection"  />
       <el-table-column prop="id" label="试卷ID" width="70" />
       <el-table-column prop="paperTitle" label="试卷名称" />
       <el-table-column prop="totalTime" label="考试时间(分钟)" />
@@ -42,8 +42,7 @@
         @current-change="handlePageChange"
         layout="prev, pager, next"
     ></el-pagination>
-    <!-- <el-pagination v-model:current-page="currentPage1" :page-size="10" :small="small" layout="total, prev, pager, next" :total="100" @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" /> -->
+
     <el-dialog v-model="addExamDialog" title="添加新的试卷" width="30%" center>
       <el-form ref="addExamForm" :model="addExamData" status-icon label-width="70px">
 
@@ -67,20 +66,27 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-dialog v-model="addQuestions" title="添加试题">
-      <el-table :data="tableQuestionData" ref="questionTable" border stripe style="width: 100%" @selection-change="handleSelectionQuestion">
+    <el-dialog v-model="addQuestions" style="width:1100px" title="添加试题">
+      <el-table :data="tableQuestionData" :pagination="paginationRef" ref="questionTable" border stripe highlight-current-row style="width: 100%" @selection-change="handleSelectionQuestion">
 
         <el-table-column type="selection" />
 
-        <el-table-column prop="id" label="题目ID" min-width="70px" />
-        <el-table-column prop="illCaseType" label="题目类型" min-width="100px" />
-        <el-table-column prop="context" label="题目内容" min-width="400px"  />
+        <el-table-column prop="id" label="题目ID" min-width="90px" />
+        <el-table-column prop="illCaseType" label="题目类型" min-width="90px" />
+        <el-table-column prop="context" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" label="题目内容" min-width="600px"  />
         <el-table-column prop="score" label="给分" min-width="150px">
           <template v-slot="scope">
             <el-input v-model="scope.row.score" placeholder="请输入分数" ></el-input>
           </template>
         </el-table-column>
+
       </el-table>
+      <el-pagination
+          ref="pagination"
+          :current-page="pagination.CurrentPage"
+          :total="pagination.total"
+          @current-change="handleCurrentChange"
+      ></el-pagination>
       <el-button style="margin-top: 20px;" @click="handleClickQuestionSubmit" type="success">添加</el-button>
     </el-dialog>
 <!--    <el-dialog v-model="updatePaperDialog" title="修改试卷" width="30%" center @close="handleUpdatePaperDialogClose">-->
@@ -152,12 +158,74 @@
   </el-card>
 </template>
 
+<!--<script>-->
+<!--export default {-->
+<!--  data(){-->
+<!--    return{-->
+<!--      pagination: {-->
+<!--        currentPage: 1,-->
+<!--        pageSize: 5,-->
+<!--        pageSizes: [5, 10, 15],-->
+<!--        total: 0,-->
+<!--      },-->
+<!--    };-->
+<!--  },-->
+<!--  methods:{-->
+<!--    handlePaginationSizeChange(val) {-->
+<!--      this.pagination.pageSize = val;-->
+<!--      // Load data for the current page-->
+
+<!--      // You can use an API call or filter the data array in-memory-->
+<!--    },-->
+<!--    handlePaginationChange(val) {-->
+<!--      this.pagination.currentPage = val;-->
+
+<!--      // Load data for the current page-->
+<!--      // You can use an API call or filter the data array in-memory-->
+<!--    },-->
+<!--  },-->
+<!--};-->
+<!--</script>-->
+
+
+
 <script setup>
 import {ref, onMounted, watch, watchEffect} from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import {addPaper, removePaper, updatePaper, searchPaper, searchQuestion} from '@/api/api';
 import { ElMessage } from 'element-plus';
+
+const paginationRef = ref(null);
+
+const pagination = {
+  CurrentPage: 1,
+  total: 0,
+  layout: "total,  prev, pager, next, jumper",
+};
+
+const handleCurrentChange = async (page) => {
+  pagination.CurrentPage = page;
+  console.log(multipleSelectionQuestion.value);
+  await searchQuestions(page);
+  console.log(tableQuestionData)
+  tableQuestionData.value.forEach((row) => {
+    console.log("row:"+row.id)
+    if (selectHistory.includes(row.id)) {
+      console.log("row:"+row.id)
+      row.checked = true;
+    }
+  });
+  console.log(tableQuestionData)
+};
+// function handleSizeChange(size) {
+//   pagination.pageSize = size;
+// }
+
+onMounted(() => {
+  paginationRef.value.$el.querySelector(".is-current").click();
+});
+
 const currentPage = ref(1)
 const total = ref(0)
 const pageSize = 5
@@ -187,6 +255,16 @@ const handleSelectionChange = (val) => {
 
 const multipleSelectionQuestion=ref([])
 const handleSelectionQuestion = (val) => {
+  val.map((elem) => elem.id).forEach((id) => {
+    if (!selectHistory.includes(id)) {
+      selectHistory=selectHistory.filter(item => item !== id);
+    }
+  });
+  val.map((elem) => elem.id).forEach((id) => {
+
+      selectHistory.push(id)
+
+  });
   multipleSelectionQuestion.value = val.map((elem) => ({
     questionId: elem.id,
     // score: parseInt(elem.score) ?? 0 // 初始默认为0
@@ -194,6 +272,9 @@ const handleSelectionQuestion = (val) => {
 
   }));
 };
+
+let selectHistory=[]
+
 
 const handleDelete = data => {
   // const login = store.getters.isLogIn;
@@ -270,10 +351,16 @@ const handleClickEdit = data => {
       // 这里可以对返回的数据进行映射和处理，以满足表格的需求
       let illCaseType = '';
       if (item.illCaseType === 1) {
-        illCaseType = "猫科";
+        illCaseType = "传染病";
       } else if (item.illCaseType === 2) {
-        illCaseType = "犬科"
-      } else {
+        illCaseType = "寄生虫病"
+      }
+      else if (item.illCaseType === 3) {
+        illCaseType = "内科"
+      }
+      else if (item.illCaseType === 4) {
+        illCaseType = "外科"
+      }else {
         illCaseType="其他";
       }
       return {
@@ -362,6 +449,10 @@ onMounted(() => {
 watch(currentPage, (newValue) => {
   search(arg.value, newValue)
 })
+
+watch(pagination.currentPage,(newValue) => {
+  searchQuestions(newValue)
+})
 const handlePageChange = (newPage) => {
   currentPage.value = newPage
 }
@@ -383,41 +474,57 @@ const search = (arg,page) => {
 
     tableData.value=[];
     let i,j=0;
-    for(i = 0+(page-1)*pageSize,j=0;j<pageSize&&i<res.data.length;i++,j++){
+    for(i = 0+(page-1)*pageSize,j=0;j<pageSize&&i<res.recordsTotal;i++,j++){
       tableData.value[j]= res.data[i];
     }
-    total.value = res.data.length
+    total.value = res.recordsTotal
     console.log(tableData);
     console.log(tableData.value);
     console.log(tableData.value);
   });
-  searchQuestion({
-    start:0,
-    length:8000
-  }).then(res =>{
-    tableQuestionData.value = res.data.map(item => {
-      // 这里可以对返回的数据进行映射和处理，以满足表格的需求
-      let illCaseType = '';
-      if (item.illCaseType === 1) {
-        illCaseType = "猫科";
-      } else if (item.illCaseType === 2) {
-        illCaseType = "犬科"
-      } else {
-        illCaseType="其他";
-      }
-      return {
-
-        id: item.id,
-        illCaseType: illCaseType,
-        context: item.context
-      }
-    })
-    // tableQuestionData.value=res.data,
-    console.log(tableQuestionData.value);
-  });
+     searchQuestions()
 
 }
 
+const searchQuestions = (page) =>{
+  return new Promise((resolve) => {
+    searchQuestion({
+      start:(page-1)*5||0,
+      length:5
+    }).then(res =>{
+      tableQuestionData.value = res.data.map(item => {
+
+        // 这里可以对返回的数据进行映射和处理，以满足表格的需求
+        let illCaseType = '';
+        if (item.illCaseType === 1) {
+          illCaseType = "传染病";
+        } else if (item.illCaseType === 2) {
+          illCaseType = "寄生虫病"
+        }
+        else if (item.illCaseType === 3) {
+          illCaseType = "内科"
+        }
+        else if (item.illCaseType === 4) {
+          illCaseType = "外科"
+        }else {
+          illCaseType="其他";
+        }
+        return {
+          checked:false,
+          id: item.id,
+          illCaseType: illCaseType,
+          context: item.context
+        }
+      })
+
+      pagination.total=res.recordsTotal;
+      // tableQuestionData.value=res.data,
+      console.log(tableQuestionData.value);
+    });
+  })
+
+
+}
 const handleSearchExam = () => {
 
     search(arg.value,1)
@@ -471,7 +578,7 @@ const handleAddSubmit = () => {
     })
 
     addExamDialog.value = false;
-     location.reload()
+  //   location.reload()
   })
 }
 
