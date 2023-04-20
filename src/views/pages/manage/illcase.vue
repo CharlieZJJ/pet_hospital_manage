@@ -13,7 +13,7 @@
                     <Delete />
                 </el-icon>删除</el-button>
         </div>
-        <el-table :data="tableData" border stripe style="width: 100%" height="460" @selection-change="handleSelectionChange">
+        <el-table ref="illCaseRef" :data="tableData" border stripe style="width: 100%" height="460" @selection-change="handleSelectionChange">
             <el-table-column type="selection" />
             <el-table-column prop="id" label="ID" width="70" />
             <el-table-column prop="name" label="病例名称" show-overflow-tooltip="true" />
@@ -185,7 +185,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import {ref, onMounted, watch, nextTick} from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { searchIll, addIll, removeIll, updateIll, getFileIds, uploadFile, deleteFile } from '@/api/api';
@@ -193,7 +193,7 @@ import { ElMessage } from 'element-plus';
 
 const store = useStore()
 const router = useRouter()
-
+const illCaseRef=ref()
 /**
  * 文件操作
  */
@@ -589,6 +589,7 @@ const search = (arg, page) => {
         total.value = res.totalpages * 10
         // console.log(res)
         console.log(total.value);
+
     })
 }
 
