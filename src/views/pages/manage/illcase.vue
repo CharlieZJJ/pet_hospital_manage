@@ -240,7 +240,7 @@ const hangleImageDelete = (file) => {
         token: login.token
     }).then(res => {
         ElMessage.success('删除成功！')
-
+        
     })
 }
 
@@ -450,7 +450,9 @@ const handleDelete = data => {
             message: '删除成功',
             type: 'success',
         })
+        illCaseRef.value.clearSelection()
         search('%', 0)
+        currentPage.value = 1
     })
 }
 
@@ -460,17 +462,22 @@ const handleIllDeleteBatch = () => {
         router.push('/login')
     }
     console.log(multipleSelection.value)
+    let res = []
     for (let i = 0; i < multipleSelection.value.length; i++) {
-        removeIll({
+        res.push(removeIll({
             token: login.token,
             id: multipleSelection.value[i]
-        })
+        }))
     }
-    ElMessage({
-        message: '删除成功',
-        type: 'success',
+    Promise.all(res).then(res => {
+        ElMessage({
+            message: '删除成功',
+            type: 'success',
+        })
+        illCaseRef.value.clearSelection()
+        search('%', 0)
+        currentPage.value = 1
     })
-    search('%', 0)
 }
 
 /**
