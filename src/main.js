@@ -17,10 +17,10 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
 
-// 添加全局异常处理
-app.config.errorHandler = (err, vm, info) => {
-    console.log(`Error: ${err.toString()}\nInfo: ${info}`)
-}
+// // 添加全局异常处理
+// app.config.errorHandler = (err, vm, info) => {
+//     console.log(`Error: ${err.toString()}\nInfo: ${info}`)
+// }
 
 app.use(store)
 app.use(router)

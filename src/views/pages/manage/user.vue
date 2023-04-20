@@ -32,7 +32,7 @@
 
     </div>
     <el-table :data="tableData" border stripe style="width: 100%; margin-top: 20px;" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" />
+<!--      <el-table-column type="selection" />-->
       <el-table-column prop="id" label="ID"></el-table-column>
       <el-table-column prop="username" label="用户名"></el-table-column>
       <el-table-column prop="usertype" label="权限"></el-table-column>
@@ -169,7 +169,7 @@ export default {
 import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import {changePassword, searchUser, setUserType, searchExam, updateUser} from '@/api/api';
+import {changePassword, searchUser, setUserType, removeUser, updateUser} from '@/api/api';
 import {ElMessage} from "element-plus";
 
 const store = useStore()
@@ -366,10 +366,21 @@ const handleChangePassword = (data) => {
 }
 
 const handleDelete = (data) => {
-  const index = tableData.value.findIndex(item => item.id === data.id)
-  if (index !== -1) {
-    tableData.value.splice(index, 1)
-  }
+  const login = store.getters.isLogIn;
+  removeUser({
+    token:login.token,
+    id:data.id
+  }).then(res=>{
+    if(res.success){
+      ElMessage({
+        message: '删除成功',
+        type: 'success',
+      });
+      search("%",currentPage.value)
+    }
+  })
+
+
 }
 
 

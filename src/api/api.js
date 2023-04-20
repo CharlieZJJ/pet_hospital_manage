@@ -13,6 +13,12 @@ export const searchUser = data => {
         data
     })
 }
+export const removeUser = data => {
+    return post({
+        url: '/userManage/removeUser',
+        data
+    })
+}
 
 export const changePassword = data => {
     return post({

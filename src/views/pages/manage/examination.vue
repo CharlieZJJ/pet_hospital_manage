@@ -519,7 +519,8 @@ const handleEditExamSubmit = () => {
       message: '修改成功',
       type: 'success',
     })}
-
+    editExamDialog.value=false;
+    search("",currentPage.value);
    // location.reload()
   })
 }
