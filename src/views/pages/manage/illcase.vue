@@ -13,7 +13,7 @@
                     <Delete />
                 </el-icon>删除</el-button>
         </div>
-        <el-table ref="illCaseRef" :data="tableData" border stripe style="width: 100%" height="460" @selection-change="handleSelectionChange">
+        <el-table ref="illCaseRef" :data="tableData" border stripe style="width: 100%" height="528" @selection-change="handleSelectionChange">
             <el-table-column type="selection" />
             <el-table-column prop="id" label="ID" width="70" />
             <el-table-column prop="name" label="病例名称" show-overflow-tooltip="true" />

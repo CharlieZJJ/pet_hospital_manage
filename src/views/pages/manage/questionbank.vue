@@ -15,7 +15,7 @@
                     <Delete />
                 </el-icon>删除</el-button>
         </div>
-        <el-table ref="tableRef" :data="tableData" border stripe style="width: 100%" height="460" @selection-change="handleSelectionChange"
+        <el-table ref="tableRef" :data="tableData" border stripe style="width: 100%" height="530" @selection-change="handleSelectionChange"
             :cell-style="handleCellStyle" row-key="id">
             <el-table-column type="selection" align="center" reserve-selection/>
             <el-table-column prop="id" label="ID" width="70" align="center" />
