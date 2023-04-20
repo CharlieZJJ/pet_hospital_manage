@@ -12,30 +12,45 @@ const routes = [
     path: '/',
     name: 'home',
     component: Layout,
+    meta: {
+      showDashboard: true
+    },
     children: [
       // user
       {
         path: '/user',
         name: 'user',
-        component: () => import('../views/pages/manage/user.vue')
+        component: () => import('../views/pages/manage/user.vue'),
+        meta: {
+          showDashboard: false
+        },
       },
       // illcase
       {
         path: '/illcase',
         name: 'illcase',
-        component: () => import('../views/pages/manage/illcase.vue')
+        component: () => import('../views/pages/manage/illcase.vue'),
+        meta: {
+          showDashboard: false
+        },
       },
       // questionbank
       {
         path: '/questionbank',
         name: 'questionbank',
-        component: () => import('../views/pages/manage/questionbank.vue')
+        component: () => import('../views/pages/manage/questionbank.vue'),
+        meta: {
+          showDashboard: false
+        },
       },
       // examination
       {
         path: '/examination',
         name: 'examination',
-        component: () => import('../views/pages/manage/examination.vue')
+        component: () => import('../views/pages/manage/examination.vue'),
+        meta: {
+          showDashboard: false
+        },
       }
     ]
   }
