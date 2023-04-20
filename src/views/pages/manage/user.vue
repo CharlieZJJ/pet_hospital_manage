@@ -64,7 +64,7 @@
         :page-size="pageSize"
         :total="total"
         @current-change="handlePageChange"
-        layout="prev, pager, next"
+        layout="prev, pager, next,jumper"
     ></el-pagination>
     <el-dialog
         v-model="dialogVisible"
