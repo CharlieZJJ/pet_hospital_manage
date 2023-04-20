@@ -4,18 +4,18 @@
             <el-select v-model="arg.illCaseTypes" multiple placeholder="Select" class="select"
                 @change="handleQuestionSearch">
                 <el-option v-for="illCaseType in illCaseTypes" :key="illCaseType.value" :label="illCaseType.label"
-                    :value="illCaseType.value" width="200px" />
+                    :value="illCaseType.value" />
             </el-select>
             <el-input v-model="arg.context" placeholder="请输入要查询的题目内容" class="input" />
             <el-button type="primary" @click="handleQuestionSearch">搜索</el-button>
             <el-button type="primary" @click="addQuestionDialog = true"><el-icon>
                     <DocumentAdd />
                 </el-icon>添加</el-button>
-            <el-button type="primary" @click="handleQuestionDeleteBatch"> <el-icon>
+            <el-button type="danger" @click="handleQuestionDeleteBatch"> <el-icon>
                     <Delete />
                 </el-icon>删除</el-button>
         </div>
-        <el-table :data="tableData" border stripe style="width: 100%" height="460" @selection-change="handleSelectionChange"
+        <el-table ref="tableRef" :data="tableData" border stripe style="width: 100%" height="460" @selection-change="handleSelectionChange"
             :cell-style="handleCellStyle" row-key="id">
             <el-table-column type="selection" align="center" reserve-selection/>
             <el-table-column prop="id" label="ID" width="70" align="center" />
@@ -84,7 +84,7 @@
                 <div v-for="(option, index) in updateQuestionData.options">
                     <el-form-item :label="'选项 ' + String.fromCharCode(index + 65)" prop="option">
                         <div class="card-header">
-                            <el-input v-model="option.option" autocomplete="off" style="width: 540px;" /> &nbsp;
+                            <el-input v-model="option.option" autocomplete="off" style="width: 100%;" /> &nbsp;
                             <el-button :type="btn[index].type" @click="handleUpdateQuestionRight(index)"><span
                                     v-html="btn[index].msg"></span></el-button>
                         </div>
@@ -114,6 +114,7 @@ const router = useRouter()
  * 删除和批量删除
  */
 
+const tableRef = ref()
 const handleDelete = data => {
     const login = store.getters.isLogIn;
     if (!login.isLogIn) {
@@ -133,6 +134,7 @@ const handleQuestionDeleteBatch = () => {
     }
     removeQuestion(multipleSelection.value).then(res => {
         ElMessage.success('删除成功')
+        tableRef.value.clearSelection()
         searchDefault()
     })
 }
@@ -273,9 +275,9 @@ const handleUpdateSubmit = () => {
     }
     updateQuestion(updateQuestionData.value).then(res => {
         ElMessage.success("成功啦~")
+        handleUpdateQuestionDialogClose()
+        searchDefault()
     })
-    handleUpdateQuestionDialogClose()
-    searchDefault()
 }
 
 const handleUpdateQuestionRight = index => {
@@ -478,10 +480,10 @@ const search = data => {
 
 const searchDefault = () => {
     searchQuestion({
-        illCaseTypes: data.illCaseTypes,
-        context: data.context,
-        start: data.start,
-        length: data.length
+        illCaseTypes: [],
+        context: '',
+        start: 0,
+        length: 10
     }).then(res => {
         tableData.value = res.data.map(ele => {
             return {
@@ -492,7 +494,8 @@ const searchDefault = () => {
             }
         })
         total.value = res.recordsTotal
-        console.log(tableData)
+        currentPage.value = 1
+        // console.log(tableData)
         // console.log(tableData.value)
     })
 }

@@ -95,7 +95,7 @@ const loginBase = (data) => {
                 token: res.data.token,
             }
             store.commit('setUserInfo', toStore)
-            localStorage.setItem("login", JSON.stringify(toStore))
+            sessionStorage.setItem("login", JSON.stringify(toStore))
 
             router.push({
                 path: '/'

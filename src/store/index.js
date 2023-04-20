@@ -2,7 +2,7 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-    userInfo: (localStorage.getItem("login") && JSON.parse(localStorage.getItem("login"))) || null
+    userInfo: (sessionStorage.getItem("login") && JSON.parse(sessionStorage.getItem("login"))) || null
   },
   getters: {
     isLogIn(state) {
