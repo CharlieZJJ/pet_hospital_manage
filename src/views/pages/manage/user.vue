@@ -406,7 +406,6 @@ const search = (arg, page) => {
   searchUser({
     token: login.token,
     username: arg,
-
   }).then(res => {
     tableData.value=[];
     let i,j=0;

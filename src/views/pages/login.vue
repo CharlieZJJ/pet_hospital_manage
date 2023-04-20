@@ -42,7 +42,7 @@
                 ]">
                     <el-input type="text" v-model.trim="data.loginData.username" autocomplete="off"></el-input>
                 </el-form-item>
-                <br/>
+                <br />
                 <el-form-item label="密码" prop="password" :rules="[
                     {
                         required: true,
@@ -52,7 +52,7 @@
                 ]">
                     <el-input type="password" v-model.trim="data.loginData.password" autocomplete="off"></el-input>
                 </el-form-item>
-                <br/>
+                <br />
                 <el-form-item>
                     <el-button style="width: 100%" type="primary" @click="handleLogin">立即登录</el-button>
                 </el-form-item>
@@ -89,16 +89,18 @@ onMounted(() => {
 
 const loginBase = (data) => {
     login(data).then(res => {
-        const toStore = {
-            data: data,
-            token: res.data.token,
-        }
-        store.commit('setUserInfo', toStore)
-        localStorage.setItem("login", JSON.stringify(toStore))
+        if (res.success) {
+            const toStore = {
+                data: data,
+                token: res.data.token,
+            }
+            store.commit('setUserInfo', toStore)
+            localStorage.setItem("login", JSON.stringify(toStore))
 
-        router.push({
-            path: '/'
-        })
+            router.push({
+                path: '/'
+            })
+        }
     })
 }
 </script>
@@ -119,9 +121,9 @@ const loginBase = (data) => {
     border-radius: 4px;
     box-shadow: 0px 21px 41px 0px rgba(0, 0, 0, 0.2);
     position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%,-50%);
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .head {
@@ -159,4 +161,5 @@ const loginBase = (data) => {
 
 .login-form>>>.el-form-item {
     margin-bottom: 0;
-}</style>
+}
+</style>
