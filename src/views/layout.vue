@@ -154,7 +154,7 @@ export default {
 </script>
 <script setup>
 import { ArrowRight } from '@element-plus/icons-vue'
-import { computed, onMounted, ref, nextTick } from 'vue';
+import { computed, onMounted, ref, nextTick, watch } from 'vue';
 import { useRouter, useRoute } from "vue-router";
 import * as echarts from 'echarts'
 import { searchIll, searchQuestion, searchPaper, searchUser } from '@/api/api'
@@ -178,6 +178,12 @@ const routes = computed(() => {
     })
     // console.log(ret)
     return ret
+})
+
+watch(routes, (newval) => {
+    if(newval.length == 1) {
+        location.reload()
+    }
 })
 const editData = ref({
     id: 0,
