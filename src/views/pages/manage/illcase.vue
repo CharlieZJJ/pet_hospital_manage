@@ -545,6 +545,7 @@ const handleUpdateSubmit = () => {
             message: '修改成功',
             type: 'success',
         })
+        currentPage.value = 1
         updateIllDialog.value = false;
         search('%', 0)
     })
