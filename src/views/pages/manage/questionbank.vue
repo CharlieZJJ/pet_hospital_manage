@@ -102,7 +102,7 @@
 <script setup>
 import { searchQuestion, addQuestion, updateQuestion, removeQuestion } from '@/api/api';
 import { ElMessage } from 'element-plus';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
@@ -351,6 +351,7 @@ const handleAddQuestionRight = (index) => {
             addQuestionData.value.options[i].right = false
         }
     }
+    console.log(addQuestionData.value)
 }
 
 
@@ -383,11 +384,12 @@ const handleAddSubmit = () => {
     if (!login.isLogIn) {
         router.push('/login')
     }
+    // console.log(addQuestionData.value)
     addQuestion(addQuestionData.value).then(res => {
-        
+        ElMessage.success('成功啦~')
+        handleAddQuestionDialogClose()
+        searchDefault()
     })
-    handleAddQuestionDialogClose()
-    searchDefault()
 }
 
 const handleAddReset = () => {
