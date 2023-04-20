@@ -2,22 +2,6 @@
     <div class="common-layout">
         <el-container>
             <el-aside width="200px" class="common-aside">
-<!--             <div style="display: flex; justify-content: flex-end; align-items: center;margin-bottom: 30px" class="Touxiang">-->
-<!--                <el-dropdown style="text-align: center; margin: auto ">-->
-<!--                  <div class="account">-->
-<!--                    <img src="../../public/img/值班医生.png" alt="头像" class="touxiang"/>-->
-<!--                    <div style="font-weight: bolder;margin-top: 10px; "><div  style="color: aqua">你好:{{wellCome}}</div></div>-->
-<!--                  </div>-->
-<!--                  <template #dropdown>-->
-<!--                    <el-dropdown-menu>-->
-
-<!--                      <el-dropdown-item @click="handleClickEdit">修改用户名</el-dropdown-item>-->
-<!--                      <el-dropdown-item @click="handleChangePassword">修改密码</el-dropdown-item>-->
-<!--                      <el-dropdown-item @click="logout">退出</el-dropdown-item>-->
-<!--                    </el-dropdown-menu>-->
-<!--                  </template>-->
-<!--                </el-dropdown>-->
-<!--              </div>-->
                 <el-menu background-color="none" text-color="#fff" :router="true">
                     <el-menu-item index="/user"> <el-icon>
                             <User />
@@ -34,58 +18,37 @@
                 </el-menu>
             </el-aside>
             <el-main>
-              <el-dialog
-                  v-model="dialogVisible"
-                  title="更改用户信息"
-                  width="30%"
-                  center
-              >
-                <el-form
-                    ref="editDataForm"
-                    :model="editData"
-                    status-icon
-                    label-width="70px"
-                >
-                  <el-form-item label="ID" prop="id">
-                    <el-input v-model="editData.id" autocomplete="off" disabled></el-input>
-                  </el-form-item>
-                  <el-form-item label="用户名" prop="name">
-                    <el-input v-model="editData.name" autocomplete="off"></el-input>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" @click="handleUpdateSubmit">提交</el-button>
-                    <el-button type="primary" @click="handleUpdateReset">重置</el-button>
-                    <el-button type="primary" @click="dialogVisible = false"
-                    >取消</el-button
-                    >
-                  </el-form-item>
-                </el-form>
-              </el-dialog>
-              <el-dialog
-                  v-model="dialogPasswordVisible"
-                  title="修改密码"
-                  width="30%"
-                  center
-              >
-                <el-form
-                    ref="editPasswordForm"
-                    :model="editPassword"
-                    status-icon
-                    label-width="70px"
-                >
-                  <el-form-item label="旧密码" prop="oldPassword">
-                    <el-input v-model="editPassword.oldPassword" autocomplete="off" show-password disabled></el-input>
-                  </el-form-item>
-                  <el-form-item label="新密码" prop="newPassword">
-                    <el-input v-model="editPassword.newPassword" autocomplete="off" show-password></el-input>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" @click="handleUpdatePasswordSubmit">提交</el-button>
-                    <el-button type="primary" @click="handleUpdatePasswordReset">重置</el-button>
-                    <el-button type="primary" @click="dialogPasswordVisible = false">取消</el-button>
-                  </el-form-item>
-                </el-form>
-              </el-dialog>
+                <el-dialog v-model="dialogVisible" title="更改用户信息" width="30%" center>
+                    <el-form ref="editDataForm" :model="editData" status-icon label-width="70px">
+                        <el-form-item label="ID" prop="id">
+                            <el-input v-model="editData.id" autocomplete="off" disabled></el-input>
+                        </el-form-item>
+                        <el-form-item label="用户名" prop="name">
+                            <el-input v-model="editData.name" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="handleUpdateSubmit">提交</el-button>
+                            <el-button type="primary" @click="handleUpdateReset">重置</el-button>
+                            <el-button type="primary" @click="dialogVisible = false">取消</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-dialog>
+                <el-dialog v-model="dialogPasswordVisible" title="修改密码" width="30%" center>
+                    <el-form ref="editPasswordForm" :model="editPassword" status-icon label-width="70px">
+                        <el-form-item label="旧密码" prop="oldPassword">
+                            <el-input v-model="editPassword.oldPassword" autocomplete="off" show-password
+                                disabled></el-input>
+                        </el-form-item>
+                        <el-form-item label="新密码" prop="newPassword">
+                            <el-input v-model="editPassword.newPassword" autocomplete="off" show-password></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="handleUpdatePasswordSubmit">提交</el-button>
+                            <el-button type="primary" @click="handleUpdatePasswordReset">重置</el-button>
+                            <el-button type="primary" @click="dialogPasswordVisible = false">取消</el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-dialog>
                 <el-breadcrumb :separator-icon="ArrowRight">
                     <el-breadcrumb-item v-for="route in routes" :key="route.path" :to="{ path: route.path }">
                         {{ route.name }}
@@ -95,7 +58,7 @@
                 <div v-if="showDashboard" class="dashboard-editor-container">
                     <el-row :gutter="40" class="panel-group">
                         <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-                            <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
+                            <div class="card-panel" @click="handleSetLineChartData('user')">
                                 <div>
                                     <User class="card-panel-icon-wrapper icon-people" />
                                 </div>
@@ -109,7 +72,7 @@
                             </div>
                         </el-col>
                         <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-                            <div class="card-panel" @click="handleSetLineChartData('messages')">
+                            <div class="card-panel" @click="handleSetLineChartData('illcase')">
                                 <div>
                                     <FirstAidKit class="card-panel-icon-wrapper icon-message" />
                                 </div>
@@ -123,7 +86,7 @@
                             </div>
                         </el-col>
                         <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-                            <div class="card-panel" @click="handleSetLineChartData('purchases')">
+                            <div class="card-panel" @click="handleSetLineChartData('questionbank')">
                                 <div>
                                     <SetUp class="card-panel-icon-wrapper icon-money" />
                                 </div>
@@ -137,7 +100,7 @@
                             </div>
                         </el-col>
                         <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-                            <div class="card-panel" @click="handleSetLineChartData('shoppings')">
+                            <div class="card-panel" @click="handleSetLineChartData('examination')">
                                 <div>
                                     <DocumentChecked class="card-panel-icon-wrapper icon-shopping" />
                                 </div>
@@ -167,24 +130,24 @@
 
 <script>
 export default {
-  name:"layout",
-  data:function() {
-    return{
-      wellCome: JSON.parse(localStorage.getItem('login')).data.username ,
+    name: "layout",
+    data: function () {
+        return {
+            wellCome: JSON.parse(localStorage.getItem('login')).data.username,
 
-    }
-  },
-
-  methods: {
-    logout(){
-      console.log(localStorage.getItem('login'));
-      localStorage.removeItem('login');
-      console.log(localStorage.getItem('login'));
-      this.$router.push('/login');
+        }
     },
 
+    methods: {
+        logout() {
+            console.log(localStorage.getItem('login'));
+            localStorage.removeItem('login');
+            console.log(localStorage.getItem('login'));
+            this.$router.push('/login');
+        },
 
-  },
+
+    },
 
 
 }
@@ -217,111 +180,115 @@ const routes = computed(() => {
     return ret
 })
 const editData = ref({
-  id: 0,
-  name: '',
-  nameBackup: ''
+    id: 0,
+    name: '',
+    nameBackup: ''
 })
-const editPassword=ref({
-  oldPassword:'',
-  newPassword:''
+const editPassword = ref({
+    oldPassword: '',
+    newPassword: ''
 })
 const handleUpdatePasswordSubmit = () => {
-  if(editPassword.value.oldPassword === editPassword.value.newPassword) {
-    dialogPasswordVisible.value = false;
-    return;
-  }
-
-  const login = store.getters.isLogIn;
-
-  if(!login.isLogIn) {
-    router.push('/login')
-  }
-  console.log(editData.value.name)
-  changePassword({
-    token: login.token,
-    oldPassword:editPassword.value.oldPassword,
-    newPassword: editPassword.value.newPassword
-  }).then(res => {
-    dialogPasswordVisible.value = false;
-    const login = JSON.parse(localStorage.getItem('login') || '{}');
-    if(res.success===true){
-      login.data.password = editPassword.value.newPassword;
-      localStorage.setItem('login', JSON.stringify(login));
-      ElMessage({
-        message: '修改成功',
-        type: 'success',
-      })
+    if (editPassword.value.oldPassword === editPassword.value.newPassword) {
+        dialogPasswordVisible.value = false;
+        return;
     }
 
-  })
+    const login = store.getters.isLogIn;
+
+    if (!login.isLogIn) {
+        router.push('/login')
+    }
+    console.log(editData.value.name)
+    changePassword({
+        token: login.token,
+        oldPassword: editPassword.value.oldPassword,
+        newPassword: editPassword.value.newPassword
+    }).then(res => {
+        dialogPasswordVisible.value = false;
+        const login = JSON.parse(localStorage.getItem('login') || '{}');
+        if (res.success === true) {
+            login.data.password = editPassword.value.newPassword;
+            localStorage.setItem('login', JSON.stringify(login));
+            ElMessage({
+                message: '修改成功',
+                type: 'success',
+            })
+        }
+
+    })
+}
+
+const handleSetLineChartData = name => {
+    router.push(name)
 }
 const handleChangePassword = (data) => {
 
 
-  editPassword.value['oldPassword']=JSON.parse(localStorage.getItem('login')).data.password
-  dialogPasswordVisible.value = true
+    editPassword.value['oldPassword'] = JSON.parse(localStorage.getItem('login')).data.password
+    dialogPasswordVisible.value = true
 }
 const handleUpdatePasswordReset = () => {
-  editPassword.value['newPassword'] = editPassword.value['oldPassword']
+    editPassword.value['newPassword'] = editPassword.value['oldPassword']
 
 }
 
 const handleUpdateReset = () => {
-  editData.value['name'] = editData.value['nameBackup']
+    editData.value['name'] = editData.value['nameBackup']
 
 }
 
 const handleClickEdit = (data) => {
 
-  const login = store.getters.isLogIn;
-  searchUser({
-    token: login.token,
-    username: '%',
+    const login = store.getters.isLogIn;
+    searchUser({
+        token: login.token,
+        username: '%',
 
-  }).then(res => {
-    console.log(res);
-    const row=res.data.find(user =>user.username === JSON.parse(localStorage.getItem('login')).data.username);
-    console.log(row);
-    editData.value['id'] = row ? row.id : null;
-  })
+    }).then(res => {
+        console.log(res);
+        const row = res.data.find(user => user.username === JSON.parse(localStorage.getItem('login')).data.username);
+        console.log(row);
+        editData.value['id'] = row ? row.id : null;
+    })
 
 
-  editData.value['name'] =  JSON.parse(localStorage.getItem('login')).data.username
-  editData.value['nameBackup'] =  JSON.parse(localStorage.getItem('login')).data.username
-  console.log(editData.value)
-  dialogVisible.value = true
+    editData.value['name'] = JSON.parse(localStorage.getItem('login')).data.username
+    editData.value['nameBackup'] = JSON.parse(localStorage.getItem('login')).data.username
+    console.log(editData.value)
+    dialogVisible.value = true
 }
 const handleUpdateSubmit = () => {
-  if(editData.value.name === editData.value.nameBackup) {
-    dialogVisible.value = false;
-    return;
-  }
-
-  const login = store.getters.isLogIn;
-
-  if(!login.isLogIn) {
-    router.push('/login')
-  }
-  console.log(editData.value.name)
-  updateUser({
-    token: login.token,
-
-    newUsername: editData.value.name
-  }).then(res => {
-    dialogVisible.value = false;
-    console.log(res);
-    if(res.success===true){
-      const login = JSON.parse(localStorage.getItem('login') || '{}');
-      login.data.username = editData.value.name;
-      localStorage.setItem('login', JSON.stringify(login));
-      wellCome.value=editData.value.name;
-      ElMessage({
-        message: '修改成功',
-        type: 'success',
-      })
+    if (editData.value.name === editData.value.nameBackup) {
+        dialogVisible.value = false;
+        return;
     }
 
-  })
+    const login = store.getters.isLogIn;
+
+    if (!login.isLogIn) {
+        router.push('/login')
+    }
+    console.log(editData.value.name)
+    updateUser({
+        token: login.token,
+
+        newUsername: editData.value.name
+    }).then(res => {
+        dialogVisible.value = false;
+        console.log(res);
+        if (res.success === true) {
+            const login = JSON.parse(localStorage.getItem('login') || '{}');
+            login.data.username = editData.value.name;
+            localStorage.setItem('login', JSON.stringify(login));
+            wellCome.value = editData.value.name;
+            ElMessage({
+                message: '修改成功',
+                type: 'success',
+            })
+        }
+
+    })
 }
 
 
@@ -421,59 +388,47 @@ const initChart = (option) => {
 }
 
 onMounted(() => {
-    searchQuestion({
+    const q1 = searchQuestion({
         illCaseTypes: [1],
         context: "",
         start: 0,
         length: 10000
-    }).then(res => {
-        pieChartOption.series[0].data.push({
-            value: res.recordsTotal,
-            name: '接诊'
-        })
-        // questionToal.value += res.recordsTotal
     })
-    searchQuestion({
+
+    const q2 = searchQuestion({
         illCaseTypes: [2],
         context: "",
         start: 0,
         length: 10000
-    }).then(res => {
-        pieChartOption.series[0].data.push({
-            value: res.recordsTotal,
-            name: '检验'
-        })
-        // questionToal.value += res.recordsTotal
     })
-    searchQuestion({
+
+    const q3 = searchQuestion({
         illCaseTypes: [3],
         context: "",
         start: 0,
         length: 10000
-    }).then(res => {
-        pieChartOption.series[0].data.push({
-            value: res.recordsTotal,
-            name: '诊断'
-        })
-        // questionToal.value += res.recordsTotal
     })
-    searchQuestion({
+
+    const q4 = searchQuestion({
         illCaseTypes: [4],
         context: "",
         start: 0,
         length: 10000
-    }).then(res => {
-        pieChartOption.series[0].data.push({
-            value: res.recordsTotal,
-            name: '治疗'
-        })
-        // questionToal.value += res.recordsTotal
+    })
+
+    const map = ['接诊', '检验', '诊断', '治疗']
+    Promise.all([q1, q2, q3, q4]).then(res => {
+        for (let i = 0; i < res.length; i++) {
+            pieChartOption.series[0].data.push({
+                value: res[i].recordsTotal,
+                name: map[i]
+            })
+        }
         nextTick(() => {
             initChart(pieChartOption)
         })
     })
 })
-
 
 </script>
 
